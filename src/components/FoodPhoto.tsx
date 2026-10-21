@@ -15,6 +15,7 @@ interface Props {
 
 export function FoodPhoto({ photo, width, alt = '', eager = false }: Props) {
   const [failed, setFailed] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   if (failed) {
     return (
       <span className="photo photo--missing" role={alt ? 'img' : undefined} aria-label={alt || undefined}>
@@ -24,12 +25,18 @@ export function FoodPhoto({ photo, width, alt = '', eager = false }: Props) {
   }
   return (
     <img
-      className="photo"
+      // Fade in once loaded instead of popping in; also catches images that were already cached.
+      ref={(img) => {
+        if (img?.complete && img.naturalWidth > 0 && !loaded) setLoaded(true)
+      }}
+      className={`photo ${loaded ? 'is-loaded' : ''}`}
       src={photoUrl(photo, width)}
       srcSet={`${photoUrl(photo, width)} 1x, ${photoUrl(photo, width * 2)} 2x`}
       alt={alt}
       loading={eager ? 'eager' : 'lazy'}
+      fetchPriority={eager ? 'high' : 'auto'}
       decoding="async"
+      onLoad={() => setLoaded(true)}
       onError={() => setFailed(true)}
     />
   )

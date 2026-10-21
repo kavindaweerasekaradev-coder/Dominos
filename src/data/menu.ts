@@ -159,7 +159,7 @@ export const PRODUCTS: Product[] = [
     description: 'Simply mozzarella, tomato sauce and fresh basil. Light and always right.',
     tags: ['veg'],
     prices: { personal: 890, medium: 1890, large: 2790 },
-    photo: { id: 'wgq8NVyXsYY', by: 'Luigi Boccardo' },
+    photo: { id: 'frTrM7Gdkho', by: 'Nadya Filatova' },
   },
   {
     id: 'chicken-sausage-feast',

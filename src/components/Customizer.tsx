@@ -109,7 +109,7 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
     >
       <div className="customizer__hero">
         <div className="customizer__art">
-          <FoodPhoto photo={product.photo} width={200} />
+          <FoodPhoto photo={product.photo} width={360} />
         </div>
         <div>
           <p className="eyebrow">{editing ? 'Edit your pizza' : 'Make it yours'}</p>

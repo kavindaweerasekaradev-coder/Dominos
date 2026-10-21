@@ -240,9 +240,9 @@ main:focus {
   font-weight: 700;
   font-size: 15px;
   text-decoration: none;
+  /* No transform transition: GSAP animates some buttons, and a CSS transition on transform breaks its tweens. */
   transition:
     background 0.15s,
-    transform 0.1s,
     box-shadow 0.15s;
   white-space: nowrap;
 }
@@ -614,16 +614,15 @@ main:focus {
   margin-top: 32px;
 }
 .btn--hot {
-  /* GSAP moves this button toward the cursor, so CSS must not also transition its transform. */
-  transition:
-    background 0.15s,
-    box-shadow 0.15s;
   background: #e3342f;
   color: #fff;
   box-shadow: 0 12px 28px rgb(227 52 47 / 45%);
 }
 .btn--hot:hover {
-  background: #c92420;
+  background: #d62a25;
+  box-shadow:
+    0 0 0 6px rgb(227 52 47 / 22%),
+    0 16px 34px rgb(227 52 47 / 55%);
 }
 .btn--glass {
   background: rgb(255 255 255 / 10%);
@@ -1257,6 +1256,14 @@ main:focus {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  /* A gentle boost so the food looks warm and fresh. */
+  filter: saturate(1.1) contrast(1.05);
+  transition: opacity 0.5s ease;
+}
+.photo.is-loaded,
+.photo--missing {
+  opacity: 1;
 }
 .photo--missing {
   display: grid;

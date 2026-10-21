@@ -107,7 +107,7 @@ export function Footer({ route }: { route: Route }) {
               </div>
             </div>
             <div className="footer-cta__pizza" aria-hidden="true">
-              <FoodPhoto photo={PRODUCT_BY_ID['pepperoni-classic'].photo} width={340} />
+              <FoodPhoto photo={PRODUCT_BY_ID['pepperoni-classic'].photo} width={520} />
             </div>
           </section>
         </div>

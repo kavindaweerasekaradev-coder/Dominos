@@ -150,7 +150,7 @@ export function OrderTracking({ id }: { id: string }) {
               return (
                 <li key={i.key} className="cart-line">
                   <div className="cart-line__art">
-                    <FoodPhoto photo={p.photo} width={64} />
+                    <FoodPhoto photo={p.photo} width={80} />
                   </div>
                   <div className="cart-line__main">
                     <div className="cart-line__top">

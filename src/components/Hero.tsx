@@ -72,7 +72,7 @@ export function Hero() {
         gsap.to(q('.hero__copy'), { y: -60, opacity: 0.2, ease: 'none', scrollTrigger: scrub })
 
         if (window.matchMedia('(pointer: fine)').matches) {
-          // The pizza follows the mouse slightly; the main button leans toward the cursor.
+          // The pizza follows the mouse slightly.
           const stage = q('.hero__stage')[0]
           const xTo = gsap.quickTo(stage, 'x', { duration: 0.8, ease: 'power3.out' })
           const yTo = gsap.quickTo(stage, 'y', { duration: 0.8, ease: 'power3.out' })
@@ -80,23 +80,8 @@ export function Hero() {
             xTo((e.clientX / window.innerWidth - 0.5) * 30)
             yTo((e.clientY / window.innerHeight - 0.5) * 30)
           }
-          const cta = q('.btn--hot')[0] as HTMLElement
-          const bx = gsap.quickTo(cta, 'x', { duration: 0.4, ease: 'power3.out' })
-          const by = gsap.quickTo(cta, 'y', { duration: 0.4, ease: 'power3.out' })
-          const onCta = (e: PointerEvent) => {
-            const r = cta.getBoundingClientRect()
-            bx((e.clientX - r.left - r.width / 2) * 0.25)
-            by((e.clientY - r.top - r.height / 2) * 0.35)
-          }
-          const offCta = () => (bx(0), by(0))
           window.addEventListener('pointermove', onMove)
-          cta.addEventListener('pointermove', onCta)
-          cta.addEventListener('pointerleave', offCta)
-          return () => {
-            window.removeEventListener('pointermove', onMove)
-            cta.removeEventListener('pointermove', onCta)
-            cta.removeEventListener('pointerleave', offCta)
-          }
+          return () => window.removeEventListener('pointermove', onMove)
         }
       })
     },
@@ -233,7 +218,7 @@ export function Hero() {
                     <div className="hero__plate-spin">
                       {FEATURED.map((p, i) => (
                         <div key={p.id} className="hero__slide" aria-hidden={i !== index}>
-                          <FoodPhoto photo={p.photo} width={640} alt={`${p.name} pizza`} eager={i === 0} />
+                          <FoodPhoto photo={p.photo} width={900} alt={`${p.name} pizza`} eager={i === 0} />
                         </div>
                       ))}
                     </div>

@@ -77,7 +77,7 @@ export function ProductCard({ product, variant = 'grid' }: { product: Product; v
   return (
     <article ref={card} className={`product-card product-card--${variant}`}>
       <div ref={media} className="product-card__media">
-        <FoodPhoto photo={product.photo} width={320} />
+        <FoodPhoto photo={product.photo} width={480} />
         {isPizza && <button type="button" className="product-card__media-link" onClick={customise} tabIndex={-1} aria-hidden="true" />}
         {product.badge && (
           <span className={`badge ${product.badge === 'New' ? 'badge--new' : ''}`}>

@@ -163,7 +163,7 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
           <div className="deal-feature__pizzas" aria-hidden="true">
             {['pepperoni-classic', 'kochchi-paneer'].map((id) => (
               <span key={id} className="deal-feature__pizza">
-                <FoodPhoto photo={PRODUCT_BY_ID[id].photo} width={260} />
+                <FoodPhoto photo={PRODUCT_BY_ID[id].photo} width={420} />
               </span>
             ))}
           </div>
@@ -176,7 +176,7 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
             <article key={c.code} className={`deal-coupon deal-coupon--${c.tone}`} aria-labelledby={`deal-${c.code}`}>
               <span className="deal-coupon__shine" aria-hidden="true" />
               <div className="deal-coupon__media">
-                <FoodPhoto photo={PRODUCT_BY_ID[c.photo].photo} width={140} />
+                <FoodPhoto photo={PRODUCT_BY_ID[c.photo].photo} width={260} />
               </div>
               <div className="deal-coupon__body">
                 <div className="deal-coupon__top">
