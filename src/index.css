@@ -317,6 +317,14 @@ main:focus {
 .btn__price {
   font-variant-numeric: tabular-nums;
 }
+/* The chevron glyph has blank space on both sides; pull it in so text and arrow sit centred in the button. */
+.btn__arrow {
+  margin: 0 -5px 0 -3px;
+  transition: translate 0.2s ease;
+}
+.btn:hover .btn__arrow {
+  translate: 3px 0;
+}
 .btn--grow {
   justify-content: space-between;
 }

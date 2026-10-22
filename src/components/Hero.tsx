@@ -174,7 +174,7 @@ export function Hero() {
               </button>
               <div className="hero__ctas">
                 <button type="button" className="btn btn--hot btn--lg" onClick={() => scrollToSection('menu')}>
-                  Order now <Icon name="chevronRight" size={18} />
+                  Order now <Icon name="chevronRight" size={18} className="btn__arrow" />
                 </button>
                 <button type="button" className="btn btn--glass btn--lg" onClick={() => scrollToSection('deals')}>
                   <Icon name="tag" size={18} /> See today’s deals

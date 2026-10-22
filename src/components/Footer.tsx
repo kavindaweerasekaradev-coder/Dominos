@@ -99,7 +99,7 @@ export function Footer({ route }: { route: Route }) {
               <h2 id="footer-cta-title">Hot pizza at your door in about 30 minutes.</h2>
               <div className="footer-cta__actions">
                 <button type="button" className="btn btn--white btn--lg" onClick={() => goTo('menu')}>
-                  Order now <Icon name="chevronRight" size={18} />
+                  Order now <Icon name="chevronRight" size={18} className="btn__arrow" />
                 </button>
                 <a className="btn btn--glass btn--lg" href={TEL}>
                   <Icon name="phone" size={18} /> {HOTLINE}

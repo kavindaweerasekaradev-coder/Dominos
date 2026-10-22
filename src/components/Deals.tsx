@@ -156,7 +156,7 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
           <Status code="DUO" />
           <div className="deal-feature__actions">
             <button type="button" className="btn btn--white btn--lg" onClick={onPickPizzas}>
-              Choose 2 pizzas <Icon name="chevronRight" size={18} />
+              Choose 2 pizzas <Icon name="chevronRight" size={18} className="btn__arrow" />
             </button>
             <Terms deal={duo} />
           </div>
