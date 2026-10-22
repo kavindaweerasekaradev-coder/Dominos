@@ -10,7 +10,7 @@ import { useUi } from '../state/ui'
 import { Deals } from './Deals'
 import { FoodPhoto } from './FoodPhoto'
 import { Hero } from './Hero'
-import { Icon } from './Icon'
+import { Icon, type IconName } from './Icon'
 import { ProductCard } from './ProductCard'
 
 type Filter = 'veg' | 'spicy'
@@ -114,43 +114,70 @@ function Rail({ title, note, products }: { title: string; note: string; products
   )
 }
 
+const HOW_STEPS: { icon: IconName; tone: 'blue' | 'amber' | 'green'; label: string; title: string; text: string; proof: string }[] = [
+  {
+    icon: 'receipt',
+    tone: 'blue',
+    label: 'Pick',
+    title: 'Real prices, up front',
+    text: 'Every size is priced on the menu. Taxes are included and fees are shown before checkout.',
+    proof: 'Taxes included',
+  },
+  {
+    icon: 'tag',
+    tone: 'amber',
+    label: 'Save',
+    title: 'Best deal, automatically',
+    text: 'No hunting for codes. Your cart always gets the biggest saving.',
+    proof: 'No codes needed',
+  },
+  {
+    icon: 'scooter',
+    tone: 'green',
+    label: 'Track',
+    title: 'Live order tracking',
+    text: 'See every step from oven to doorstep, with a clear arrival time.',
+    proof: 'About 30 min to your door',
+  },
+]
+
 function OrderAgain() {
   const { state, dispatch } = useStore()
   const { showToast, setCartOpen } = useUi()
   const last = state.orders[0]
   if (!last) {
     return (
-      <section className="panel panel--why" aria-labelledby="why-title">
-        <h2 id="why-title">Ordering made simple</h2>
-        <ul className="why-list">
-          <li>
-            <span className="why-list__icon">
-              <Icon name="receipt" />
-            </span>
-            <div>
-              <strong>Real prices, up front</strong>
-              <p className="small muted">Every size is priced on the menu. Taxes are included and fees are shown before checkout.</p>
-            </div>
-          </li>
-          <li>
-            <span className="why-list__icon">
-              <Icon name="tag" />
-            </span>
-            <div>
-              <strong>Best deal, automatically</strong>
-              <p className="small muted">No hunting for codes. Your cart always gets the biggest saving.</p>
-            </div>
-          </li>
-          <li>
-            <span className="why-list__icon">
-              <Icon name="scooter" />
-            </span>
-            <div>
-              <strong>Live order tracking</strong>
-              <p className="small muted">See every step from oven to doorstep, with a clear arrival time.</p>
-            </div>
-          </li>
-        </ul>
+      <section className="how" aria-labelledby="why-title">
+        <div className="how__head">
+          <div>
+            <p className="eyebrow">How it works</p>
+            <h2 id="why-title">Ordering made simple</h2>
+          </div>
+          <p className="how__sub">Three easy steps from craving to doorstep, with no surprises at checkout.</p>
+        </div>
+        <ol className="how__steps">
+          {HOW_STEPS.map((s, i) => (
+            <li key={s.label} className={`how__step how__step--${s.tone}`}>
+              <div className="how__top">
+                <span className="how__icon">
+                  <Icon name={s.icon} size={26} />
+                </span>
+                <span className="how__num" aria-hidden="true">
+                  0{i + 1}
+                </span>
+              </div>
+              <p className="how__label">
+                <span className="how__label-num">Step {i + 1} · </span>
+                {s.label}
+              </p>
+              <h3>{s.title}</h3>
+              <p className="how__text">{s.text}</p>
+              <p className="how__proof">
+                <Icon name="check" size={16} /> {s.proof}
+              </p>
+            </li>
+          ))}
+        </ol>
       </section>
     )
   }
@@ -306,7 +333,10 @@ export function Home() {
   useGSAP(
     () => {
       gsap.matchMedia().add(MOTION_OK, () => {
-        const targets = gsap.utils.toArray<HTMLElement>('.section__head, .menu__group-title, .panel, .product-card, .info-card', scope.current)
+        const targets = gsap.utils.toArray<HTMLElement>(
+          '.section__head, .menu__group-title, .panel, .how__head, .how__step, .product-card, .info-card',
+          scope.current,
+        )
         gsap.set(targets, { opacity: 0, y: 36 })
         ScrollTrigger.batch(targets, {
           start: 'top 92%',
