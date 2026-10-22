@@ -17,8 +17,8 @@ const DUO_MAX_SAVING = MEDIUMS[0] + MEDIUMS[1] - 3990
 
 const COUPONS = [
   { code: 'BIG20', photo: 'veggie-paradise', value: 20, unit: '%', label: 'off Large', tone: 'blue' },
-  { code: 'SWEET', photo: 'fudge-cake', value: 0, unit: 'free', label: 'chocolate cake', tone: 'amber' },
-  { code: 'PICKUP15', photo: 'bbq-chicken', value: 15, unit: '%', label: 'off on pickup', tone: 'green' },
+  { code: 'SWEET', photo: 'fudge-cake', value: 0, unit: 'free', label: 'chocolate cake', tone: 'red' },
+  { code: 'PICKUP15', photo: 'bbq-chicken', value: 15, unit: '%', label: 'off on pickup', tone: 'navy' },
 ] as const
 
 /** Where the shopper stands on a deal right now, based on their cart. */

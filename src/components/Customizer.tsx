@@ -127,8 +127,8 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
             <label key={s.id} className={`size-opt ${draft.size === s.id ? 'is-on' : ''}`}>
               <input type="radio" name="size" checked={draft.size === s.id} onChange={() => update({ size: s.id })} />
               <svg viewBox="0 0 40 40" width={18 + s.inches * 1.6} height={18 + s.inches * 1.6} aria-hidden="true">
-                <circle cx="20" cy="20" r="18" fill="#F1C27D" />
-                <circle cx="20" cy="20" r="14" fill="#F6D27A" />
+                <circle className="size-opt__crust" cx="20" cy="20" r="18" />
+                <circle className="size-opt__top" cx="20" cy="20" r="14" />
               </svg>
               <strong>{s.label}</strong>
               <span className="muted small">

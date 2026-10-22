@@ -114,7 +114,7 @@ function Rail({ title, note, products }: { title: string; note: string; products
   )
 }
 
-const HOW_STEPS: { icon: IconName; tone: 'blue' | 'amber' | 'green'; label: string; title: string; text: string; proof: string }[] = [
+const HOW_STEPS: { icon: IconName; tone: 'blue' | 'red' | 'navy'; label: string; title: string; text: string; proof: string }[] = [
   {
     icon: 'receipt',
     tone: 'blue',
@@ -125,7 +125,7 @@ const HOW_STEPS: { icon: IconName; tone: 'blue' | 'amber' | 'green'; label: stri
   },
   {
     icon: 'tag',
-    tone: 'amber',
+    tone: 'red',
     label: 'Save',
     title: 'Best deal, automatically',
     text: 'No hunting for codes. Your cart always gets the biggest saving.',
@@ -133,7 +133,7 @@ const HOW_STEPS: { icon: IconName; tone: 'blue' | 'amber' | 'green'; label: stri
   },
   {
     icon: 'scooter',
-    tone: 'green',
+    tone: 'navy',
     label: 'Track',
     title: 'Live order tracking',
     text: 'See every step from oven to doorstep, with a clear arrival time.',
