@@ -129,7 +129,16 @@ export function ProductCard({ product, variant = 'grid' }: { product: Product; v
             <span className="price" aria-live="polite">
               {lkr(price)}
             </span>
-            <span className="price-note">{isPizza ? `${sizeInfo.label} · ${sizeInfo.serves}` : product.unit}</span>
+            <span className="price-note">
+              {isPizza ? (
+                <>
+                  {sizeInfo.label}
+                  <span className="price-note__serves"> · {sizeInfo.serves}</span>
+                </>
+              ) : (
+                product.unit
+              )}
+            </span>
           </div>
           <button
             type="button"

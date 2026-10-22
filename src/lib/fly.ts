@@ -5,15 +5,17 @@ export function flyToCart(from: HTMLElement) {
   const cart = document.querySelector<HTMLElement>('.cart-btn')
   if (!cart || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+  // On big screens the page is CSS-zoomed: measurements come back zoomed, but styles we set get zoomed again.
+  const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1
   const a = from.getBoundingClientRect()
   const b = cart.getBoundingClientRect()
   const clone = from.cloneNode(true) as HTMLElement
   Object.assign(clone.style, {
     position: 'fixed',
-    left: `${a.left}px`,
-    top: `${a.top}px`,
-    width: `${a.width}px`,
-    height: `${a.height}px`,
+    left: `${a.left / z}px`,
+    top: `${a.top / z}px`,
+    width: `${a.width / z}px`,
+    height: `${a.height / z}px`,
     margin: '0',
     zIndex: '70',
     pointerEvents: 'none',
@@ -24,8 +26,8 @@ export function flyToCart(from: HTMLElement) {
   clone.setAttribute('aria-hidden', 'true')
   document.body.appendChild(clone)
 
-  const dx = b.left + b.width / 2 - (a.left + a.width / 2)
-  const dy = b.top + b.height / 2 - (a.top + a.height / 2)
+  const dx = (b.left + b.width / 2 - (a.left + a.width / 2)) / z
+  const dy = (b.top + b.height / 2 - (a.top + a.height / 2)) / z
   // Different eases on x and y give the flight a curved path.
   gsap
     .timeline({ onComplete: () => clone.remove() })

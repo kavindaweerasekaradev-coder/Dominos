@@ -53,6 +53,28 @@
 html {
   scroll-padding-top: calc(var(--header-h) + 72px);
 }
+/* Big monitors (QHD, 4K): scale the whole layout up like browser zoom, so it keeps
+   desktop proportions instead of shrinking into a strip in the middle of the screen. */
+@media (min-width: 1800px) {
+  html {
+    zoom: 1.12;
+  }
+}
+@media (min-width: 2200px) {
+  html {
+    zoom: 1.35;
+  }
+}
+@media (min-width: 2800px) {
+  html {
+    zoom: 1.65;
+  }
+}
+@media (min-width: 3400px) {
+  html {
+    zoom: 2;
+  }
+}
 body {
   margin: 0;
   background: var(--bg);
@@ -1016,6 +1038,11 @@ main:focus {
   .hero__sub {
     font-size: 16px;
   }
+  /* On phones the strip wraps, so make it a rounded card rather than a stretched pill. */
+  .hero__deal {
+    border-radius: 18px;
+    padding: 8px 12px 8px 8px;
+  }
   .hero__deal-timer {
     padding-left: 0;
     border-left: 0;
@@ -1510,6 +1537,13 @@ main:focus {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 18px;
 }
+/* Tablets: three cards per row instead of two very large ones. */
+@media (min-width: 521px) and (max-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+    gap: 14px;
+  }
+}
 @media (max-width: 520px) {
   .grid {
     grid-template-columns: 1fr 1fr;
@@ -1536,9 +1570,17 @@ main:focus {
   }
   .grid .price {
     font-size: 17px;
+    white-space: nowrap;
+  }
+  .grid .price-block {
+    min-width: 0;
   }
   .grid .price-note {
     font-size: 11px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .grid .add-pill {
     width: 40px;
@@ -1566,6 +1608,28 @@ main:focus {
   }
 }
 
+/* Very small phones: tighten the two-column cards so prices stay on one line. */
+@media (max-width: 380px) {
+  .grid {
+    gap: 8px;
+  }
+  .grid .product-card__body {
+    padding: 8px 8px 9px;
+  }
+  .grid .price {
+    font-size: 15px;
+  }
+  .grid .add-pill {
+    width: 36px;
+    min-height: 36px;
+  }
+  .grid .size-pick button {
+    font-size: 11px;
+  }
+  .grid .price-note__serves {
+    display: none;
+  }
+}
 .menu__group + .menu__group {
   margin-top: 32px;
 }
@@ -1587,6 +1651,12 @@ main:focus {
   padding-block: 40px 24px;
   /* The cards fly in from the sides; don't let their starting position widen the page. */
   overflow-x: clip;
+}
+/* Where there's room beside the section, let the card shadows show instead of being cut off. */
+@media (min-width: 1300px) {
+  .deals {
+    overflow-clip-margin: 48px;
+  }
 }
 .deals__head {
   margin-bottom: 22px;
