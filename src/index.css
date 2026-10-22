@@ -57,22 +57,26 @@ html {
    desktop proportions instead of shrinking into a strip in the middle of the screen. */
 @media (min-width: 1800px) {
   html {
-    zoom: 1.12;
+    --zoom: 1.12;
+    zoom: var(--zoom);
   }
 }
 @media (min-width: 2200px) {
   html {
-    zoom: 1.35;
+    --zoom: 1.35;
+    zoom: var(--zoom);
   }
 }
 @media (min-width: 2800px) {
   html {
-    zoom: 1.65;
+    --zoom: 1.65;
+    zoom: var(--zoom);
   }
 }
 @media (min-width: 3400px) {
   html {
-    zoom: 2;
+    --zoom: 2;
+    zoom: var(--zoom);
   }
 }
 body {
@@ -148,6 +152,14 @@ main:focus {
 @media (max-width: 600px) {
   .container {
     padding-inline: 16px;
+  }
+}
+/* Desktop, 1080p to 4K: content fills the screen with an 80px margin on each side.
+   Divided by the page zoom so the margin stays 80 real pixels on big monitors. */
+@media (min-width: 1280px) {
+  .container {
+    max-width: none;
+    padding-inline: calc(80px / var(--zoom, 1));
   }
 }
 .sr-only {
