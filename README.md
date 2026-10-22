@@ -48,6 +48,10 @@ src/
 
 Built with React, TypeScript and Vite, with [GSAP](https://gsap.com) (ScrollTrigger, SplitText) for the hero intro, scroll effects and reveal animations. All motion is skipped when the visitor’s device is set to reduce motion. Fonts are self-hosted (Plus Jakarta Sans, Bricolage Grotesque).
 
+## Icons
+
+All icons are from [Lucide](https://lucide.dev), free under the ISC license, via the `lucide-react` package. `src/components/Icon.tsx` maps the names used across the site to Lucide icons, so swapping one is a one-line change there.
+
 ## Photos
 
 All food photos are free photos from [Unsplash](https://unsplash.com), used under the [Unsplash License](https://unsplash.com/license). They load from Unsplash at the size each spot needs. If a photo can’t load, a plain tile is shown instead. The photo IDs live in `src/data/menu.ts`. For a production site, replace them with your own product photography.
