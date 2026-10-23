@@ -2362,17 +2362,23 @@ main:focus {
   transform: scale(1.3);
 }
 .deal-coupon__body {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px 18px 14px;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 20px 16px;
   border-left: 2px dashed var(--line-2);
 }
+/* The round photo sits in the corner so it doesn't push the text apart. */
 .deal-coupon__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: block;
+  padding-right: 64px;
+}
+.deal-coupon__top .deal-coupon__media {
+  position: absolute;
+  top: 14px;
+  right: 16px;
 }
 .deal-coupon__value {
   font-family: var(--display);
@@ -2384,12 +2390,16 @@ main:focus {
 .deal-coupon--red .deal-coupon__value {
   font-size: 34px;
 }
+/* The offer itself is the headline. */
 .deal-coupon__title {
-  font-size: 18px;
-  letter-spacing: -0.01em;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 .deal-coupon__summary {
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--muted);
 }
 .deal-coupon__actions {
@@ -2397,8 +2407,8 @@ main:focus {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-top: auto;
-  padding-top: 4px;
+  /* 16px between the text and the button (12px plus the 4px column gap). */
+  margin-top: 12px;
 }
 .deal-coupon__btn {
   display: inline-flex;
