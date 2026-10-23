@@ -2344,41 +2344,13 @@ main:focus {
   color: #fff;
   border-color: rgb(255 255 255 / 60%);
 }
-.deal-coupon__media {
-  width: 58px;
-  height: 58px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  background: var(--tone-soft);
-  box-shadow: 0 6px 14px rgb(10 30 45 / 16%);
-}
-.deal-coupon__media .photo {
-  transform: scale(1.15);
-  transition: transform 0.5s ease;
-}
-.deal-coupon:hover .deal-coupon__media .photo {
-  transform: scale(1.3);
-}
 .deal-coupon__body {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
   padding: 18px 20px 16px;
   border-left: 2px dashed var(--line-2);
-}
-/* The round photo sits in the corner so it doesn't push the text apart. */
-.deal-coupon__top {
-  display: block;
-  padding-right: 64px;
-}
-.deal-coupon__top .deal-coupon__media {
-  position: absolute;
-  top: 14px;
-  right: 16px;
 }
 .deal-coupon__value {
   font-family: var(--display);
@@ -2489,10 +2461,6 @@ main:focus {
   }
   .deal-coupon--red .deal-coupon__value {
     font-size: 26px;
-  }
-  .deal-coupon__media {
-    width: 46px;
-    height: 46px;
   }
   .deals__digit {
     min-width: 54px;

@@ -18,9 +18,9 @@ const DUO_MAX_SAVING = MEDIUMS[0] + MEDIUMS[1] - 3990
 const CLOCK_UNITS = ['hrs', 'min', 'sec']
 
 const COUPONS = [
-  { code: 'BIG20', photo: 'veggie-paradise', value: 20, unit: '%', label: 'off Large', tone: 'blue' },
-  { code: 'SWEET', photo: 'fudge-cake', value: 0, unit: 'free', label: 'chocolate cake', tone: 'red' },
-  { code: 'PICKUP15', photo: 'bbq-chicken', value: 15, unit: '%', label: 'off on pickup', tone: 'navy' },
+  { code: 'BIG20', value: 20, unit: '%', label: 'off Large', tone: 'blue' },
+  { code: 'SWEET', value: 0, unit: 'free', label: 'chocolate cake', tone: 'red' },
+  { code: 'PICKUP15', value: 15, unit: '%', label: 'off on pickup', tone: 'navy' },
 ] as const
 
 /** Where the shopper stands on a deal right now, based on their cart. */
@@ -104,12 +104,12 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
     { scope: root },
   )
 
-  const cta = (code: string): { label: string; run?: (photo: HTMLElement | null) => void } => {
+  const cta = (code: string): { label: string; run?: (from: HTMLElement | null) => void } => {
     switch (code) {
       case 'BIG20':
         return { label: 'Shop Large pizzas', run: onPickPizzas }
       case 'SWEET':
-        return { label: 'Add the cake', run: (photo) => quickAdd('fudge-cake', { from: photo }) }
+        return { label: 'Add the cake', run: (from) => quickAdd('fudge-cake', { from }) }
       case 'PICKUP15':
         return state.fulfilment === 'pickup'
           ? { label: 'Pickup selected', run: undefined }
@@ -209,14 +209,9 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
                 <span className="deal-code">{c.code}</span>
               </div>
               <div className="deal-coupon__body">
-                <div className="deal-coupon__top">
-                  <h3 id={`deal-${c.code}`} className="deal-coupon__title">
-                    {deal.title}
-                  </h3>
-                  <div className="deal-coupon__media">
-                    <FoodPhoto photo={PRODUCT_BY_ID[c.photo].photo} width={160} />
-                  </div>
-                </div>
+                <h3 id={`deal-${c.code}`} className="deal-coupon__title">
+                  {deal.title}
+                </h3>
                 <p className="deal-coupon__summary">{deal.summary}</p>
                 <Status code={c.code} />
                 <div className="deal-coupon__actions">
@@ -224,7 +219,7 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
                     type="button"
                     className="deal-coupon__btn"
                     disabled={!action.run}
-                    onClick={(e) => action.run?.(e.currentTarget.closest('.deal-coupon')?.querySelector<HTMLElement>('.deal-coupon__media') ?? null)}
+                    onClick={(e) => action.run?.(e.currentTarget.closest('.deal-coupon')?.querySelector<HTMLElement>('.deal-coupon__stub') ?? null)}
                   >
                     {action.label} <Icon name={action.run ? 'chevronRight' : 'check'} size={15} />
                   </button>
