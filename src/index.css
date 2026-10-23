@@ -1592,13 +1592,16 @@ main:focus {
     border-color 0.25s;
 }
 .product-card:hover {
-  border-color: var(--line-2);
-  box-shadow: 0 20px 44px rgb(10 30 45 / 14%);
+  border-color: var(--brand-line);
+  box-shadow: 0 22px 46px rgb(0 60 90 / 14%);
 }
+/* The photo sits inset in the card with its own rounded frame. */
 .product-card__media {
   position: relative;
   aspect-ratio: 4 / 3.1;
+  margin: 8px 8px 0;
   overflow: hidden;
+  border-radius: 18px;
   background: var(--bg-2);
 }
 .product-card__media .photo {
@@ -1610,8 +1613,8 @@ main:focus {
 .product-card__media::after {
   content: '';
   position: absolute;
-  inset: 55% 0 0;
-  background: linear-gradient(transparent, rgb(10 30 45 / 40%));
+  inset: 60% 0 0;
+  background: linear-gradient(transparent, rgb(0 30 45 / 35%));
   pointer-events: none;
 }
 .product-card__media-link {
@@ -1689,10 +1692,11 @@ main:focus {
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  padding: 16px 16px 14px;
+  padding: 14px 16px 14px;
 }
 .product-card__name {
   font-size: 19px;
+  letter-spacing: -0.01em;
 }
 .product-card__name button {
   text-align: left;
@@ -1712,6 +1716,7 @@ main:focus {
   min-height: 2.9em;
 }
 .size-pick {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
@@ -1719,23 +1724,34 @@ main:focus {
   border-radius: 12px;
   background: var(--bg-2);
 }
+/* A blue pill slides to the chosen size. */
+.size-pick::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 16px) / 3);
+  border-radius: 9px;
+  background: var(--brand);
+  box-shadow: 0 4px 10px rgb(0 100 145 / 28%);
+  translate: calc(var(--i, 1) * (100% + 4px)) 0;
+  transition: translate 0.32s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
 .size-pick button {
+  position: relative;
   min-height: 34px;
   border-radius: 9px;
   font-size: 13px;
   font-weight: 700;
   color: var(--ink-2);
-  transition:
-    background 0.15s,
-    color 0.15s;
+  transition: color 0.2s;
 }
 .size-pick button:hover {
-  color: var(--ink);
+  color: var(--brand);
 }
 .size-pick button[aria-checked='true'] {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
+  color: #fff;
 }
 .product-card__foot {
   display: flex;
@@ -1751,11 +1767,21 @@ main:focus {
   min-width: 0;
 }
 .price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
   font-family: var(--display);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.price__cur {
+  font-size: 0.56em;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--muted);
 }
 .price-note {
   font-size: 12px;
@@ -1794,15 +1820,18 @@ main:focus {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  border-top: 1px dashed var(--line-2);
 }
 .deal-hint {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--red-soft);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--red-strong);
 }
 .link-btn--sm {
@@ -1830,6 +1859,10 @@ main:focus {
   .grid .product-card {
     border-radius: 18px;
   }
+  .grid .product-card__media {
+    margin: 6px 6px 0;
+    border-radius: 13px;
+  }
   .grid .product-card__body {
     padding: 10px 10px 10px;
     gap: 6px;
@@ -1845,6 +1878,9 @@ main:focus {
   .grid .size-pick button {
     min-height: 32px;
     font-size: 12px;
+  }
+  .grid .size-pick::before {
+    border-radius: 8px;
   }
   .grid .price {
     font-size: 17px;
@@ -1918,10 +1954,21 @@ main:focus {
   gap: 8px;
   align-items: baseline;
 }
+.menu__group-title {
+  align-items: center;
+}
 .menu__group-title .muted {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--brand-soft);
   font-family: var(--font);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brand);
 }
 
 /* ---------- Deals ---------- */

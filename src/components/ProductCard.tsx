@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { SIZES, type Product, type SizeId } from '../data/menu'
 import { gsap, useGSAP } from '../lib/gsap'
 import { lkr } from '../lib/pricing'
@@ -108,7 +108,12 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="product-card__desc">{product.description}</p>
 
         {isPizza && (
-          <div className="size-pick" role="radiogroup" aria-label={`Size for ${product.name}`}>
+          <div
+            className="size-pick"
+            role="radiogroup"
+            aria-label={`Size for ${product.name}`}
+            style={{ '--i': SIZES.findIndex((s) => s.id === size) } as CSSProperties}
+          >
             {SIZES.map((s) => (
               <button
                 key={s.id}
@@ -127,7 +132,8 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="product-card__foot">
           <div className="price-block">
             <span className="price" aria-live="polite">
-              {lkr(price)}
+              <span className="price__cur">Rs</span>
+              {lkr(price).replace('Rs ', '')}
             </span>
             <span className="price-note">
               {isPizza ? (
