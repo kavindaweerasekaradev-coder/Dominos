@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { Fragment, useRef } from 'react'
 import { PRODUCTS, PRODUCT_BY_ID } from '../data/menu'
 import { MOTION_OK, gsap, useGSAP } from '../lib/gsap'
 import { DEALS, checkCoupon, lkr, type Deal } from '../lib/pricing'
@@ -14,6 +14,8 @@ const DEAL = Object.fromEntries(DEALS.map((d) => [d.code, d])) as Record<string,
 // Biggest saving on the 2-Mediums deal: the two priciest Medium pizzas for Rs 3,990.
 const MEDIUMS = PRODUCTS.flatMap((p) => (p.category === 'pizza' ? [p.prices.medium] : [])).sort((a, b) => b - a)
 const DUO_MAX_SAVING = MEDIUMS[0] + MEDIUMS[1] - 3990
+
+const CLOCK_UNITS = ['hrs', 'min', 'sec']
 
 const COUPONS = [
   { code: 'BIG20', photo: 'veggie-paradise', value: 20, unit: '%', label: 'off Large', tone: 'blue' },
@@ -126,20 +128,35 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
   return (
     <section ref={root} id="deals" className="container deals" aria-labelledby="deals-title">
       <div className="deals__head">
-        <p className="eyebrow">Today’s deals</p>
-        <h2 id="deals-title">Deals worth ordering for</h2>
-        <p className="deals__sub">
-          No codes needed. We apply the one that saves you most.
-          <span className="deals__timer" role="timer">
-            <Icon name="clock" size={14} /> Ends in <b>{timeLeft}</b>
+        <div>
+          <p className="eyebrow">Today’s deals</p>
+          <h2 id="deals-title">Deals worth ordering for</h2>
+          <p className="deals__sub">No codes needed. We apply the one that saves you most.</p>
+        </div>
+        <div className="deals__timer" role="timer" aria-label={`Today’s deals end in ${timeLeft}`}>
+          <span className="deals__timer-label">
+            <Icon name="clock" size={14} /> Ends tonight in
           </span>
-        </p>
+          <span className="deals__clock" aria-hidden="true">
+            {timeLeft.split(':').map((part, i) => (
+              <Fragment key={i}>
+                {i > 0 && <span className="deals__colon">:</span>}
+                <span className="deals__digit">
+                  <b>{part}</b>
+                  <small>{CLOCK_UNITS[i]}</small>
+                </span>
+              </Fragment>
+            ))}
+          </span>
+        </div>
       </div>
 
       <div className="deals__grid">
         <article className="deal-feature" aria-labelledby="deal-duo">
           <span className="deal-code">{duo.code}</span>
-          <p className="deal-feature__kicker">Best seller</p>
+          <p className="deal-feature__kicker">
+            <Icon name="flame" size={14} /> Best seller
+          </p>
           <h3 id="deal-duo" className="deal-feature__title">
             2 Medium pizzas
             <span>
@@ -166,6 +183,9 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
                 <FoodPhoto photo={PRODUCT_BY_ID[id].photo} width={420} />
               </span>
             ))}
+            <span className="deal-feature__plus">
+              <Icon name="plus" size={26} />
+            </span>
           </div>
         </article>
 
@@ -175,25 +195,28 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
           return (
             <article key={c.code} className={`deal-coupon deal-coupon--${c.tone}`} aria-labelledby={`deal-${c.code}`}>
               <span className="deal-coupon__shine" aria-hidden="true" />
-              <div className="deal-coupon__media">
-                <FoodPhoto photo={PRODUCT_BY_ID[c.photo].photo} width={260} />
+              <div className="deal-coupon__stub">
+                <p className="deal-coupon__value">
+                  {c.unit === 'free' ? (
+                    'FREE'
+                  ) : (
+                    <>
+                      <b data-count={c.value}>{c.value}</b>%
+                    </>
+                  )}
+                </p>
+                <p className="deal-coupon__unit">{c.label}</p>
+                <span className="deal-code">{c.code}</span>
               </div>
               <div className="deal-coupon__body">
                 <div className="deal-coupon__top">
-                  <p className="deal-coupon__value">
-                    {c.unit === 'free' ? (
-                      'FREE'
-                    ) : (
-                      <>
-                        <b data-count={c.value}>{c.value}</b>% <small>OFF</small>
-                      </>
-                    )}
-                  </p>
-                  <span className="deal-code">{c.code}</span>
+                  <h3 id={`deal-${c.code}`} className="deal-coupon__title">
+                    {deal.title}
+                  </h3>
+                  <div className="deal-coupon__media">
+                    <FoodPhoto photo={PRODUCT_BY_ID[c.photo].photo} width={160} />
+                  </div>
                 </div>
-                <h3 id={`deal-${c.code}`} className="deal-coupon__title">
-                  {deal.title}
-                </h3>
                 <p className="deal-coupon__summary">{deal.summary}</p>
                 <Status code={c.code} />
                 <div className="deal-coupon__actions">
