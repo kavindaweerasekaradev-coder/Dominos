@@ -33,11 +33,15 @@ export function CartLines({ editable = true }: { editable?: boolean }) {
             <div className="cart-line__main">
               <div className="cart-line__top">
                 <strong>{p.name}</strong>
-                <span className="cart-line__price">{lkr(lineTotal(item))}</span>
+                {editable && p.category === 'pizza' && (
+                  <button type="button" className="cart-line__edit" onClick={() => openProduct(p.id, item.key)} aria-label={`Edit ${p.name}`}>
+                    <Icon name="pencil" size={14} />
+                  </button>
+                )}
               </div>
-              <span className="muted small">{describeItem(item)}</span>
-              {editable && (
-                <div className="cart-line__actions">
+              <span className="cart-line__desc">{describeItem(item)}</span>
+              <div className="cart-line__bottom">
+                {editable ? (
                   <div className="qty qty--sm">
                     <button
                       type="button"
@@ -45,26 +49,23 @@ export function CartLines({ editable = true }: { editable?: boolean }) {
                       onClick={() => (item.qty === 1 ? remove(item) : dispatch({ type: 'setQty', key: item.key, qty: item.qty - 1 }))}
                       aria-label={item.qty === 1 ? `Remove ${p.name}` : `One less ${p.name}`}
                     >
-                      <Icon name={item.qty === 1 ? 'trash' : 'minus'} size={16} />
+                      <Icon name={item.qty === 1 ? 'trash' : 'minus'} size={15} />
                     </button>
                     <span className="qty__val">{item.qty}</span>
                     <button
                       type="button"
-                      className="qty__btn"
+                      className="qty__btn qty__btn--add"
                       onClick={() => dispatch({ type: 'setQty', key: item.key, qty: item.qty + 1 })}
                       aria-label={`One more ${p.name}`}
                     >
-                      <Icon name="plus" size={16} />
+                      <Icon name="plus" size={15} />
                     </button>
                   </div>
-                  {p.category === 'pizza' && (
-                    <button type="button" className="link-btn" onClick={() => openProduct(p.id, item.key)}>
-                      <Icon name="pencil" size={15} /> Edit
-                    </button>
-                  )}
-                </div>
-              )}
-              {!editable && <span className="muted small">Qty {item.qty}</span>}
+                ) : (
+                  <span className="muted small">Qty {item.qty}</span>
+                )}
+                <span className="cart-line__price">{lkr(lineTotal(item))}</span>
+              </div>
             </div>
           </li>
         )
@@ -104,7 +105,10 @@ export function DealBox() {
         </div>
       ) : (
         <p className="small muted deal-none">
-          <Icon name="tag" size={16} /> No deal applies yet. We’ll apply the best one for you automatically.
+          <span className="deal-none__icon">
+            <Icon name="tag" size={16} />
+          </span>
+          No deal applies yet. We’ll apply the best one for you automatically.
         </p>
       )}
       {totals.nudge && (
@@ -124,7 +128,7 @@ export function DealBox() {
           autoCapitalize="characters"
           aria-describedby="coupon-msg"
         />
-        <button type="submit" className="btn btn--soft">
+        <button type="submit" className="coupon__btn" disabled={!code.trim()}>
           Apply
         </button>
       </form>
@@ -192,7 +196,9 @@ export function TotalsTable({ totals }: { totals: Totals }) {
         <dt>Total</dt>
         <dd>{lkr(totals.total)}</dd>
       </div>
-      <p className="fine-print">Includes all taxes. No service charge.</p>
+      <p className="fine-print">
+        <Icon name="receipt" size={13} /> Includes all taxes. No service charge.
+      </p>
     </dl>
   )
 }

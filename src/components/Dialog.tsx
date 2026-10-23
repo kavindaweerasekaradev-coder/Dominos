@@ -9,12 +9,14 @@ interface Props {
   className?: string
   children: ReactNode
   footer?: ReactNode
+  /** Extra content beside the title, such as a count. */
+  badge?: ReactNode
 }
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])'
 
 /** Modal with focus trap, Esc to close, scroll lock and focus return. Becomes a bottom sheet on phones. */
-export function Dialog({ open, onClose, title, variant = 'center', className = '', children, footer }: Props) {
+export function Dialog({ open, onClose, title, variant = 'center', className = '', children, footer, badge }: Props) {
   const panel = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
   useEffect(() => {
@@ -63,6 +65,7 @@ export function Dialog({ open, onClose, title, variant = 'center', className = '
         <header className="dialog__head">
           <h2 id={titleId} className="dialog__title">
             {title}
+            {badge}
           </h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">
             <Icon name="x" />

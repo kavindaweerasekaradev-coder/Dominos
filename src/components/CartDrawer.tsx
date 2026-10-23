@@ -5,6 +5,7 @@ import { useUi } from '../state/ui'
 import { CartLines, DealBox, EtaLine, Progress, TotalsTable } from './CartParts'
 import { Dialog } from './Dialog'
 import { DominoTile } from './Domino'
+import { Icon } from './Icon'
 import { FulfilmentToggle } from './LocationDialog'
 
 export function CartDrawer() {
@@ -17,24 +18,41 @@ export function CartDrawer() {
     <Dialog
       open={cartOpen}
       onClose={() => setCartOpen(false)}
-      title={empty ? 'Your cart' : `Your cart · ${totals.itemCount} item${totals.itemCount > 1 ? 's' : ''}`}
+      title="Your cart"
+      badge={
+        !empty && (
+          <span className="cart-count">
+            {totals.itemCount}
+            <span className="sr-only"> item{totals.itemCount > 1 ? 's' : ''}</span>
+          </span>
+        )
+      }
       variant="drawer"
+      className="cart-drawer"
       footer={
         !empty && (
           <>
             <button
               type="button"
-              className="btn btn--primary btn--block btn--split"
+              className="btn btn--hot btn--lg btn--block cart-checkout"
               disabled={belowMin}
               onClick={() => {
                 setCartOpen(false)
                 navigate('/checkout')
               }}
             >
-              <span>Go to checkout</span>
-              <span>{lkr(totals.total)}</span>
+              <span className="cart-checkout__label">
+                Go to checkout <Icon name="chevronRight" size={18} className="btn__arrow" />
+              </span>
+              <span className="cart-checkout__total">{lkr(totals.total)}</span>
             </button>
-            {belowMin && <p className="small muted center">Add a little more to reach the delivery minimum, or switch to pickup.</p>}
+            {belowMin ? (
+              <p className="small muted center">Add a little more to reach the delivery minimum, or switch to pickup.</p>
+            ) : (
+              <p className="cart-trust">
+                <Icon name="shield" size={14} /> Secure checkout · Cash, card or online
+              </p>
+            )}
           </>
         )
       }
