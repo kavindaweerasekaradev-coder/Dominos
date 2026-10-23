@@ -2947,9 +2947,42 @@ button.info-card:hover {
 .site-footer:not(:has(.footer-cta)) .footer-main {
   padding-top: 56px;
 }
+/* Four promises in a row of tiles across the top of the footer. */
+.footer-perks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 56px;
+}
+.footer-perks li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #fff;
+}
+.footer-perks__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--brand);
+}
+.footer-perks li:nth-child(even) .footer-perks__icon {
+  color: var(--red);
+}
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.4fr;
+  grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
   gap: 40px;
 }
 .footer-brand {
@@ -2965,13 +2998,102 @@ button.info-card:hover {
   color: rgb(255 255 255 / 60%);
 }
 .footer-brand > p {
-  max-width: 320px;
+  max-width: 300px;
   font-size: 14px;
+  line-height: 1.6;
 }
-.footer-hotline {
+.footer-open {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 8%);
+  font-size: 13px;
+}
+.footer-open strong {
+  color: #fff;
+}
+.footer-open__dot {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 40%);
+}
+.footer-open.is-open .footer-open__dot {
+  background: var(--red);
+  box-shadow: 0 0 0 0 rgb(227 24 55 / 60%);
+  animation: open-pulse 2s infinite;
+}
+@keyframes open-pulse {
+  70% {
+    box-shadow: 0 0 0 8px rgb(227 24 55 / 0%);
+  }
+}
+/* Column headings with a short red rule, like a shop-sign stripe. */
+.footer-col h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.footer-col h2::before {
+  content: '';
+  width: 16px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--red);
+}
+.footer-col ul {
+  display: grid;
+  gap: 2px;
+}
+.footer-col li > button,
+.footer-col li > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+  color: rgb(255 255 255 / 76%);
+  font-size: 15px;
+  text-align: left;
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    translate 0.2s;
+}
+/* The arrow appears and the link nudges right on hover. */
+.footer-col li > button svg,
+.footer-col li > a svg {
+  opacity: 0;
+  translate: -4px 0;
+  transition:
+    opacity 0.2s,
+    translate 0.2s;
+}
+.footer-col li > button:hover,
+.footer-col li > a:hover {
+  color: #fff;
+  translate: 4px 0;
+}
+.footer-col li > button:hover svg,
+.footer-col li > a:hover svg {
+  opacity: 1;
+  translate: 0 0;
+}
+.footer-hotline {
+  display: flex;
+  align-items: center;
   gap: 12px;
+  width: 100%;
+  max-width: 300px;
   padding: 10px 18px 10px 10px;
   border-radius: 18px;
   background: rgb(255 255 255 / 8%);
@@ -3004,76 +3126,12 @@ button.info-card:hover {
   font-size: 20px;
   letter-spacing: -0.01em;
 }
-.footer-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.footer-open__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 40%);
-}
-.footer-open.is-open .footer-open__dot {
-  background: #fff;
-  box-shadow: 0 0 0 0 rgb(255 255 255 / 60%);
-  animation: open-pulse 2s infinite;
-}
-@keyframes open-pulse {
-  70% {
-    box-shadow: 0 0 0 8px rgb(255 255 255 / 0%);
-  }
-}
-.footer-col h2 {
-  margin-bottom: 14px;
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #fff;
-}
-.footer-col ul {
-  display: grid;
-  gap: 4px;
-}
-.footer-col button,
-.footer-col a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  color: rgb(255 255 255 / 80%);
-  font-size: 15px;
-  text-align: left;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.footer-col button:hover,
-.footer-col a:hover {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.footer-good {
-  gap: 10px !important;
-}
-.footer-good li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-}
-.footer-good svg {
-  margin-top: 2px;
-  color: #fff;
-}
 .footer-pay-title {
-  margin: 18px 0 8px;
+  margin: 20px 0 10px;
   font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: rgb(255 255 255 / 55%);
 }
 .footer-pay {
@@ -3085,29 +3143,44 @@ button.info-card:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 8%);
-  border: 1px solid rgb(255 255 255 / 14%);
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: #fff;
   font-size: 13px;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 700;
+  color: var(--ink);
 }
+.footer-pay svg {
+  color: var(--brand);
+}
+/* Big closing line in soft white, with red domino pips for full stops. */
 .footer-slogan {
-  margin-top: 48px;
-  overflow: clip;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  gap: 0 24px;
+  margin-top: 64px;
+  margin-bottom: 8px;
   line-height: 0.9;
   user-select: none;
 }
 .footer-slogan span {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
   font-family: var(--display);
-  font-size: clamp(64px, 12vw, 176px);
+  font-size: clamp(30px, 11vw, 168px);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
+  background: linear-gradient(180deg, rgb(255 255 255 / 22%), rgb(255 255 255 / 4%));
+  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgb(255 255 255 / 20%);
+}
+.footer-slogan i {
+  width: 0.16em;
+  height: 0.16em;
+  margin-left: 0.06em;
+  border-radius: 50%;
+  background: var(--red);
 }
 .footer-bottom {
   display: flex;
@@ -3125,23 +3198,36 @@ button.info-card:hover {
 .footer-top {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   flex-shrink: 0;
-  min-height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 8%);
-  color: #fff;
   font-size: 13px;
   font-weight: 700;
+  color: #fff;
 }
-.footer-top:hover {
-  background: rgb(255 255 255 / 16%);
+.footer-top__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 24%);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.footer-top:hover .footer-top__icon {
+  background: #fff;
+  color: var(--navy);
 }
 .footer-top svg {
   rotate: 180deg;
 }
 
+@media (max-width: 1100px) {
+  .footer-perks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 @media (max-width: 960px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;
@@ -3187,8 +3273,31 @@ button.info-card:hover {
 }
 @media (max-width: 480px) {
   .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
+  }
+  .footer-contact {
+    grid-column: 1 / -1;
+  }
+  .footer-perks {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .footer-perks li {
+    padding: 12px 14px;
+  }
+  .footer-perks__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+  .footer-slogan {
+    margin-top: 44px;
+    gap: 0 8px;
+  }
+  .footer-slogan span {
+    font-size: 10vw;
   }
 }
 

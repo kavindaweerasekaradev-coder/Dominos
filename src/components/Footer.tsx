@@ -50,7 +50,7 @@ export function Footer({ route }: { route: Route }) {
             scrollTrigger: { trigger: q('.footer-cta')[0], start: 'top bottom', end: 'bottom top', scrub: 0.6 },
           })
         }
-        gsap.from(q('.footer-col, .footer-brand > *'), {
+        gsap.from(q('.footer-col, .footer-brand'), {
           y: 30,
           autoAlpha: 0,
           duration: 0.7,
@@ -58,12 +58,23 @@ export function Footer({ route }: { route: Route }) {
           ease: 'power3.out',
           scrollTrigger: { trigger: q('.footer-main')[0], start: 'top 85%' },
         })
-        // The big slogan slides sideways as the footer scrolls past.
-        gsap.fromTo(
-          q('.footer-slogan span'),
-          { xPercent: 6 },
-          { xPercent: -14, ease: 'none', scrollTrigger: { trigger: q('.footer-slogan')[0], start: 'top bottom', end: 'bottom top', scrub: 0.8 } },
-        )
+        // The slogan words rise in one after another.
+        gsap.from(q('.footer-slogan span'), {
+          yPercent: 40,
+          autoAlpha: 0,
+          duration: 0.9,
+          stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: q('.footer-slogan')[0], start: 'top 95%' },
+        })
+        gsap.from(q('.footer-perks li'), {
+          y: 24,
+          autoAlpha: 0,
+          duration: 0.6,
+          stagger: 0.07,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: q('.footer-perks')[0], start: 'top 90%' },
+        })
       })
     },
     { scope: root, dependencies: [route.name], revertOnUpdate: true },
@@ -117,22 +128,28 @@ export function Footer({ route }: { route: Route }) {
       )}
 
       <div className="footer-main">
+        <div className="container">
+          <ul className="footer-perks">
+            {good.map((g) => (
+              <li key={g.text}>
+                <span className="footer-perks__icon">
+                  <Icon name={g.icon} size={20} />
+                </span>
+                {g.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="container footer-grid">
           <div className="footer-brand">
             <Logo />
             <p>Hot, fresh pizza from 50+ stores across Sri Lanka, made to order and delivered fast.</p>
-            <a className="footer-hotline" href={TEL}>
-              <span className="footer-hotline__icon">
-                <Icon name="phone" size={20} />
-              </span>
-              <span>
-                <small>Hotline</small>
-                <strong>{HOTLINE}</strong>
-              </span>
-            </a>
             <p className={`footer-open ${open ? 'is-open' : ''}`}>
               <span className="footer-open__dot" aria-hidden="true" />
-              {open ? 'Open now' : 'Closed now'} · {OPEN_HOURS}
+              <span>
+                <strong>{open ? 'Open now' : 'Closed now'}</strong> · {OPEN_HOURS}
+              </span>
             </p>
           </div>
 
@@ -142,13 +159,13 @@ export function Footer({ route }: { route: Route }) {
               {CATEGORIES.map((c) => (
                 <li key={c.id}>
                   <button type="button" onClick={() => pickCategory(c.id)}>
-                    {c.label}
+                    {c.label} <Icon name="chevronRight" size={14} />
                   </button>
                 </li>
               ))}
               <li>
                 <button type="button" onClick={() => goTo('deals')}>
-                  Today’s deals
+                  Today’s deals <Icon name="chevronRight" size={14} />
                 </button>
               </li>
             </ul>
@@ -159,36 +176,40 @@ export function Footer({ route }: { route: Route }) {
             <ul>
               <li>
                 <button type="button" onClick={() => setCartOpen(true)}>
-                  View cart
+                  View cart <Icon name="chevronRight" size={14} />
                 </button>
               </li>
               {latest && (
                 <li>
-                  <a href={`#/order/${latest.id}`}>Track order {latest.id}</a>
+                  <a href={`#/order/${latest.id}`}>
+                    Track order {latest.id} <Icon name="chevronRight" size={14} />
+                  </a>
                 </li>
               )}
               <li>
                 <button type="button" onClick={() => setLocationOpen(true)}>
-                  Delivery or pickup
+                  Delivery or pickup <Icon name="chevronRight" size={14} />
                 </button>
               </li>
               <li>
                 <button type="button" onClick={() => setLocationOpen(true)}>
-                  Find your store
+                  Find your store <Icon name="chevronRight" size={14} />
                 </button>
               </li>
             </ul>
           </nav>
 
-          <div className="footer-col">
-            <h2>Good to know</h2>
-            <ul className="footer-good">
-              {good.map((g) => (
-                <li key={g.text}>
-                  <Icon name={g.icon} size={16} /> {g.text}
-                </li>
-              ))}
-            </ul>
+          <div className="footer-col footer-contact">
+            <h2>Get in touch</h2>
+            <a className="footer-hotline" href={TEL}>
+              <span className="footer-hotline__icon">
+                <Icon name="phone" size={20} />
+              </span>
+              <span>
+                <small>Hotline</small>
+                <strong>{HOTLINE}</strong>
+              </span>
+            </a>
             <p className="footer-pay-title">We accept</p>
             <ul className="footer-pay">
               <li>
@@ -204,8 +225,13 @@ export function Footer({ route }: { route: Route }) {
           </div>
         </div>
 
-        <p className="footer-slogan" aria-hidden="true">
-          <span>Hot. Fresh. Yours. Hot. Fresh. Yours.</span>
+        <p className="container footer-slogan" aria-hidden="true">
+          {['Hot', 'Fresh', 'Yours'].map((w) => (
+            <span key={w}>
+              {w}
+              <i />
+            </span>
+          ))}
         </p>
 
         <div className="container footer-bottom">
@@ -217,7 +243,10 @@ export function Footer({ route }: { route: Route }) {
             .
           </p>
           <button type="button" className="footer-top" onClick={toTop}>
-            Back to top <Icon name="chevronDown" size={16} />
+            Back to top
+            <span className="footer-top__icon">
+              <Icon name="chevronDown" size={16} />
+            </span>
           </button>
         </div>
       </div>
