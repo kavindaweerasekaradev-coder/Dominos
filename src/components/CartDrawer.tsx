@@ -4,7 +4,7 @@ import { useStore } from '../state/store'
 import { useUi } from '../state/ui'
 import { CartLines, DealBox, EtaLine, Progress, TotalsTable } from './CartParts'
 import { Dialog } from './Dialog'
-import { Icon } from './Icon'
+import { DominoTile } from './Domino'
 import { FulfilmentToggle } from './LocationDialog'
 
 export function CartDrawer() {
@@ -41,8 +41,9 @@ export function CartDrawer() {
     >
       {empty ? (
         <div className="empty-state">
-          <div className="empty-state__icon">
-            <Icon name="bag" size={32} />
+          <div className="empty-state__dominoes" aria-hidden="true">
+            <DominoTile pips={2} tone="blue" />
+            <DominoTile pips={1} tone="red" />
           </div>
           <h3>Your cart is empty</h3>
           <p className="muted">Pick a pizza to get started. Deals apply automatically.</p>

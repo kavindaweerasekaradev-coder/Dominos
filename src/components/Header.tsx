@@ -3,18 +3,13 @@ import { scrollToSection } from '../lib/dom'
 import { lkr } from '../lib/pricing'
 import { useStore } from '../state/store'
 import { useUi } from '../state/ui'
+import { DominoMark } from './Domino'
 import { Icon } from './Icon'
 
 export function Logo() {
   return (
     <a href="#/" className="logo" aria-label="Domino's Sri Lanka, home">
-      <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
-        <rect x="3" y="9" width="20" height="20" rx="5" transform="rotate(-20 13 19)" fill="#006491" />
-        <rect x="15" y="9" width="20" height="20" rx="5" transform="rotate(-20 25 19)" fill="#E31837" />
-        <circle cx="10.5" cy="17" r="2.4" fill="#fff" />
-        <circle cx="15" cy="23.5" r="2.4" fill="#fff" />
-        <circle cx="26" cy="18" r="2.4" fill="#fff" />
-      </svg>
+      <DominoMark />
       <span className="logo__text">
         Domino’s<small>Sri Lanka</small>
       </span>

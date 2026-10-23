@@ -22,6 +22,10 @@
   --red-deep: #9c0c22;
   --red-soft: #fde8ec;
   --red-line: #f6bcc6;
+  /* Wall pattern of tilted domino tiles, like the graphics in Domino's outlets. */
+  --domino-pattern-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(-20 32 32)'%3E%3Crect x='15' y='15' width='34' height='34' rx='9' fill='none' stroke='white' stroke-opacity='.06' stroke-width='2'/%3E%3Ccircle cx='25' cy='25' r='3.5' fill='white' fill-opacity='.08'/%3E%3Ccircle cx='39' cy='39' r='3.5' fill='white' fill-opacity='.08'/%3E%3C/g%3E%3Cg transform='rotate(16 90 90)'%3E%3Crect x='73' y='73' width='34' height='34' rx='9' fill='none' stroke='white' stroke-opacity='.06' stroke-width='2'/%3E%3Ccircle cx='90' cy='90' r='3.5' fill='white' fill-opacity='.08'/%3E%3C/g%3E%3C/svg%3E");
+  --domino-pattern-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(-20 32 32)'%3E%3Crect x='15' y='15' width='34' height='34' rx='9' fill='none' stroke='%23006491' stroke-opacity='.12' stroke-width='2'/%3E%3Ccircle cx='25' cy='25' r='3.5' fill='%23006491' fill-opacity='.14'/%3E%3Ccircle cx='39' cy='39' r='3.5' fill='%23006491' fill-opacity='.14'/%3E%3C/g%3E%3Cg transform='rotate(16 90 90)'%3E%3Crect x='73' y='73' width='34' height='34' rx='9' fill='none' stroke='%23006491' stroke-opacity='.12' stroke-width='2'/%3E%3Ccircle cx='90' cy='90' r='3.5' fill='%23006491' fill-opacity='.14'/%3E%3C/g%3E%3C/svg%3E");
+  --domino-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='3' y='9' width='20' height='20' rx='5' transform='rotate(-20 13 19)' fill='%23006491'/%3E%3Crect x='15' y='9' width='20' height='20' rx='5' transform='rotate(-20 25 19)' fill='%23E31837'/%3E%3Ccircle cx='10.5' cy='17' r='2.4' fill='white'/%3E%3Ccircle cx='15' cy='23.5' r='2.4' fill='white'/%3E%3Ccircle cx='26' cy='18' r='2.4' fill='white'/%3E%3C/svg%3E");
 
   --radius: 20px;
   --radius-sm: 12px;
@@ -197,12 +201,23 @@ main:focus {
   text-align: center;
 }
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brand);
   margin-bottom: 6px;
+}
+/* The Domino's mark leads every section label, like the tile on a shop sign. */
+.eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background: var(--domino-mark) center / contain no-repeat;
 }
 .accent {
   color: var(--brand);
@@ -596,7 +611,7 @@ main:focus {
   padding: 56px 56px 64px;
   color: #fff;
   background:
-    radial-gradient(rgb(255 255 255 / 7%) 1.2px, transparent 1.2px) 0 0 / 22px 22px,
+    var(--domino-pattern-light) 0 0 / 120px 120px,
     linear-gradient(135deg, var(--brand) 0%, #004c70 50%, var(--navy) 100%);
   box-shadow: 0 30px 80px rgb(0 37 55 / 28%);
 }
@@ -1336,7 +1351,9 @@ main:focus {
 .photo--missing {
   display: grid;
   place-items: center;
-  background: var(--surface-2);
+  background:
+    var(--domino-pattern-ink) 0 0 / 120px 120px,
+    var(--surface-2);
   color: var(--line-2);
 }
 
@@ -2409,7 +2426,7 @@ button.info-card:hover {
   padding-top: 148px;
   color: rgb(255 255 255 / 76%);
   background:
-    radial-gradient(rgb(255 255 255 / 6%) 1.2px, transparent 1.2px) 0 0 / 22px 22px,
+    var(--domino-pattern-light) 0 0 / 120px 120px,
     linear-gradient(180deg, #004c70 0%, var(--navy) 60%, #00263a 100%);
   border-radius: 40px 40px 0 0;
   overflow: hidden;
@@ -3643,6 +3660,23 @@ button.info-card:hover {
 .empty-state h3 {
   font-size: 20px;
 }
+.empty-state__dominoes {
+  display: flex;
+  margin-bottom: 10px;
+}
+.empty-state__dominoes .domino {
+  width: 58px;
+  height: 58px;
+  filter: drop-shadow(0 10px 14px rgb(0 37 55 / 18%));
+}
+.empty-state__dominoes .domino:first-child {
+  rotate: -14deg;
+}
+.empty-state__dominoes .domino:last-child {
+  margin-left: -8px;
+  rotate: 12deg;
+  translate: 0 8px;
+}
 .empty-state__icon {
   display: grid;
   place-items: center;
@@ -4054,5 +4088,301 @@ button.info-card:hover {
   }
   .mobile-cart .btn {
     min-height: 52px;
+  }
+}
+
+/* ---------- Domino tiles ---------- */
+.domino {
+  display: block;
+}
+.domino--blue .domino__face {
+  fill: var(--brand);
+}
+.domino--red .domino__face {
+  fill: var(--red);
+}
+.domino--white .domino__face {
+  fill: #fff;
+}
+.domino__pip {
+  fill: #fff;
+}
+.domino--white .domino__pip {
+  fill: var(--brand);
+}
+
+/* ---------- Store wall: a Domino's shopfront ---------- */
+.store-wall-wrap {
+  margin-top: clamp(32px, 4vw, 56px);
+}
+.store-wall {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: 32px;
+  padding: 56px 56px 76px;
+  border-radius: 36px;
+  color: #fff;
+  background:
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    linear-gradient(135deg, var(--brand) 0%, #004c70 55%, var(--navy) 100%);
+  box-shadow: 0 30px 80px rgb(0 37 55 / 22%);
+}
+.store-wall__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.store-wall__kicker svg {
+  width: 28px;
+  height: 28px;
+  padding: 3px;
+  border-radius: 50%;
+  background: #fff;
+}
+.store-wall__title {
+  margin: 20px 0 18px;
+  font-size: clamp(48px, 6.4vw, 96px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+.store-wall__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.05em;
+}
+.store-wall__word {
+  display: inline-flex;
+  align-items: baseline;
+}
+/* Fresh sits on a red sign panel, like the mixed lettering on outlet walls. */
+.store-wall__line:nth-child(2) .store-wall__word {
+  margin: 0.04em 0;
+  padding: 0.02em 0.14em 0.06em;
+  border-radius: 0.14em;
+  background: var(--red);
+}
+.store-wall__line:nth-child(2) .store-wall__pip {
+  background: #fff;
+}
+/* A red domino pip instead of each full stop. */
+.store-wall__pip {
+  width: 0.19em;
+  height: 0.19em;
+  margin-left: 0.06em;
+  border-radius: 50%;
+  background: var(--red);
+}
+.store-wall__sub {
+  max-width: 440px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 80%);
+}
+.store-wall__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+/* Each stat is a domino: number on top, label below a dividing line. */
+.store-wall__stats li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 112px;
+  padding: 10px 16px 12px;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 8%);
+  border: 1.5px solid rgb(255 255 255 / 22%);
+  text-align: center;
+}
+.store-wall__stats strong {
+  width: 100%;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1.5px solid rgb(255 255 255 / 22%);
+  font-family: var(--display);
+  font-size: 30px;
+  line-height: 1;
+}
+.store-wall__stats span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 76%);
+}
+.store-wall__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.store-wall__art {
+  position: relative;
+  align-self: stretch;
+  min-height: 400px;
+}
+.store-wall__float {
+  position: absolute;
+}
+.store-wall__float--a {
+  width: min(250px, 56%);
+  left: 8%;
+  top: 26%;
+  rotate: -14deg;
+}
+.store-wall__float--b {
+  width: min(170px, 38%);
+  right: 2%;
+  top: 6%;
+  rotate: 16deg;
+}
+.store-wall__float--c {
+  width: min(104px, 24%);
+  right: 14%;
+  bottom: 4%;
+  rotate: -24deg;
+}
+.store-wall__tile {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 24px 30px rgb(0 20 30 / 35%));
+}
+/* The lit sign in the window. */
+.store-wall__sign {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px 18px 12px;
+  border-radius: 16px;
+  background: var(--navy);
+  border: 2px solid rgb(255 255 255 / 22%);
+  box-shadow: 0 16px 30px rgb(0 20 30 / 30%);
+}
+.store-wall__sign strong {
+  font-family: var(--display);
+  font-size: 28px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 60%);
+}
+.store-wall__sign.is-open strong {
+  color: #fff;
+  text-shadow:
+    0 0 10px rgb(227 24 55 / 90%),
+    0 0 26px rgb(227 24 55 / 60%);
+}
+.store-wall__sign small {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 72%);
+}
+.store-wall__sign-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 40%);
+}
+.store-wall__sign.is-open .store-wall__sign-dot {
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red);
+}
+/* The shopfront fascia: a white pinstripe over a red band. */
+.store-wall__stripe {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22px;
+  background:
+    linear-gradient(var(--red), var(--red)) left bottom / 100% 14px no-repeat,
+    linear-gradient(#fff, #fff) left 0 bottom 14px / 100% 4px no-repeat;
+}
+@media (max-width: 960px) {
+  .store-wall {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 44px 32px 64px;
+  }
+  .store-wall__art {
+    min-height: 280px;
+    margin-top: 16px;
+  }
+  .store-wall__float--a {
+    width: min(200px, 34%);
+    left: 12%;
+    top: 24%;
+  }
+  .store-wall__float--b {
+    width: min(150px, 26%);
+    right: 10%;
+    top: 6%;
+  }
+  .store-wall__float--c {
+    width: min(90px, 16%);
+    right: 36%;
+    bottom: 4%;
+  }
+}
+@media (max-width: 600px) {
+  .store-wall {
+    padding: 32px 20px 56px;
+    border-radius: 28px;
+  }
+  .store-wall__title {
+    font-size: clamp(44px, 14vw, 60px);
+  }
+  .store-wall__stats li {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 8px;
+  }
+  .store-wall__stats strong {
+    font-size: 24px;
+  }
+  .store-wall__ctas .btn {
+    flex: 1 1 100%;
+  }
+  .store-wall__art {
+    min-height: 250px;
+  }
+  .store-wall__sign strong {
+    font-size: 22px;
+  }
+  .store-wall__float--a {
+    width: 44%;
+    left: auto;
+    right: 4%;
+    top: 34%;
+  }
+  .store-wall__float--b {
+    width: 30%;
+    right: 50%;
+    top: auto;
+    bottom: 4%;
+  }
+  .store-wall__float--c {
+    width: 18%;
+    right: 6%;
+    top: 0;
+    bottom: auto;
   }
 }

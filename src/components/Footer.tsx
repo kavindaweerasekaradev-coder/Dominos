@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { CATEGORIES, PRODUCT_BY_ID, type CategoryId } from '../data/menu'
 import { HOTLINE } from '../data/stores'
 import { scrollToSection, showMenuCategory } from '../lib/dom'
@@ -6,26 +6,14 @@ import { MOTION_OK, gsap, useGSAP } from '../lib/gsap'
 import { FREE_DELIVERY_FROM, MIN_DELIVERY_ORDER, lkr } from '../lib/pricing'
 import { navigate, type Route } from '../lib/router'
 import { useStore } from '../state/store'
+import { OPEN_HOURS, useOpenNow } from '../state/useOpenNow'
 import { useUi } from '../state/ui'
 import { FoodPhoto } from './FoodPhoto'
 import { Logo } from './Header'
 import { Icon, type IconName } from './Icon'
 
-const OPEN_HOUR = 10
-const CLOSE_HOUR = 23
 const TEL = `tel:${HOTLINE.replace(/\s/g, '')}`
 const YEAR = new Date().getFullYear()
-
-/** Whether stores are open right now, refreshed every minute. */
-function useOpenNow() {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const t = window.setInterval(() => setNow(new Date()), 60_000)
-    return () => window.clearInterval(t)
-  }, [])
-  const h = now.getHours()
-  return h >= OPEN_HOUR && h < CLOSE_HOUR
-}
 
 export function Footer({ route }: { route: Route }) {
   const root = useRef<HTMLElement>(null)
@@ -129,7 +117,7 @@ export function Footer({ route }: { route: Route }) {
             </a>
             <p className={`footer-open ${open ? 'is-open' : ''}`}>
               <span className="footer-open__dot" aria-hidden="true" />
-              {open ? 'Open now' : 'Closed now'} · Daily 10:00 am – 11:00 pm
+              {open ? 'Open now' : 'Closed now'} · {OPEN_HOURS}
             </p>
           </div>
 

@@ -12,6 +12,7 @@ import { FoodPhoto } from './FoodPhoto'
 import { Hero } from './Hero'
 import { Icon, type IconName } from './Icon'
 import { ProductCard } from './ProductCard'
+import { StoreWall } from './StoreWall'
 
 type Filter = 'veg' | 'spicy'
 
@@ -373,6 +374,7 @@ export function Home() {
               scrollToMenu()
             }}
           />
+          <StoreWall />
           <div className="container">
             <OrderAgain />
           </div>
