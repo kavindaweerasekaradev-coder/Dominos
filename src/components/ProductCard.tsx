@@ -25,7 +25,7 @@ export function TagList({ product }: { product: Product }) {
   )
 }
 
-export function ProductCard({ product, variant = 'grid' }: { product: Product; variant?: 'grid' | 'feature' }) {
+export function ProductCard({ product }: { product: Product }) {
   const { openProduct } = useUi()
   const quickAdd = useQuickAdd()
   const { state } = useStore()
@@ -75,7 +75,7 @@ export function ProductCard({ product, variant = 'grid' }: { product: Product; v
   const customise = () => openProduct(product.id)
 
   return (
-    <article ref={card} className={`product-card product-card--${variant}`}>
+    <article ref={card} className="product-card">
       <div ref={media} className="product-card__media">
         <FoodPhoto photo={product.photo} width={480} />
         {isPizza && <button type="button" className="product-card__media-link" onClick={customise} tabIndex={-1} aria-hidden="true" />}

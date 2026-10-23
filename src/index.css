@@ -1273,63 +1273,283 @@ main:focus {
   box-shadow: var(--shadow-sm);
 }
 
-/* Rail */
-.rail {
-  position: relative;
+/* Most loved slider */
+.loved__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
-.rail__track {
+.loved__head h2 {
+  font-size: clamp(26px, 3vw, 34px);
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+.loved__arrows {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.loved__arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(0 100 145 / 25%);
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    opacity 0.15s;
+}
+.loved__arrow:hover:not(:disabled) {
+  background: var(--brand-strong);
+}
+.loved__arrow:disabled {
+  background: var(--surface);
+  color: var(--line-2);
+  border: 1.5px solid var(--line);
+  box-shadow: none;
+}
+.loved__track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(250px, calc((100% - 3 * 16px) / 4));
-  gap: 16px;
+  grid-auto-columns: calc((100% - 3 * 20px) / 4);
+  gap: 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  padding: 4px;
-  margin: -4px;
+  padding: 6px 4px 18px;
+  margin: -6px -4px -18px;
+  scroll-padding-inline: 4px;
 }
-.rail__track::-webkit-scrollbar {
+.loved__track::-webkit-scrollbar {
   display: none;
 }
-.rail__track > * {
+/* A soft fade on the right edge says there is more to see. */
+.loved__track.has-more {
+  mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent);
+}
+.loved__track > * {
   scroll-snap-align: start;
 }
-.rail__arrow {
+.loved__progress {
+  position: relative;
+  height: 4px;
+  margin-top: 22px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+.loved__progress span {
   position: absolute;
-  top: 38%;
+  inset: 0 auto 0 0;
+  width: calc(var(--size, 0.3) * 100%);
+  left: calc(var(--pos, 0) * 100%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand), var(--red));
+}
+.loved-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  border-radius: 28px;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 14px 30px rgb(10 30 45 / 14%);
+  transition: box-shadow 0.3s;
+}
+.loved-card:hover {
+  box-shadow: 0 22px 44px rgb(10 30 45 / 24%);
+}
+.loved-card__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.loved-card__media .photo {
+  transition:
+    opacity 0.5s ease,
+    scale 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.loved-card:hover .loved-card__media .photo {
+  scale: 1.07;
+}
+/* Darkens the bottom of the photo so the text reads clearly. */
+.loved-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 37 55 / 0%) 30%, rgb(0 37 55 / 70%) 58%, rgb(0 30 45 / 96%) 100%);
+}
+.loved-card__rank {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  font-family: var(--display);
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-shadow: 0 4px 18px rgb(0 0 0 / 35%);
+}
+.loved-card .in-cart {
+  top: 16px;
+  right: 16px;
+}
+/* Sets a tall photo shape; the card grows past it when the text needs more room. */
+.loved-card::before {
+  content: '';
+  grid-area: 1 / 1;
+  padding-top: 128%;
+}
+.loved-card__body {
+  grid-area: 1 / 1;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 84px 18px 18px;
+}
+.loved-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.loved-card__badge {
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: var(--red);
+  font-size: 12px;
+  font-weight: 800;
+}
+.loved-card__name {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.loved-card__name button {
+  text-align: left;
+}
+.loved-card__name button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.loved-card__desc {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: rgb(255 255 255 / 76%);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.loved-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+.loved-card__price {
+  display: flex;
+  flex-direction: column;
+}
+.loved-card__price strong {
+  font-family: var(--display);
+  font-size: 24px;
+  line-height: 1.1;
+}
+.loved-card__price span {
+  font-size: 12px;
+  color: rgb(255 255 255 / 72%);
+}
+.loved-card__add {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  z-index: 3;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 10px 22px rgb(227 24 55 / 45%);
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
 }
-.rail__arrow:hover {
-  background: var(--bg-2);
+.loved-card__add:hover {
+  background: var(--red-strong);
+  box-shadow:
+    0 0 0 6px rgb(227 24 55 / 25%),
+    0 12px 26px rgb(227 24 55 / 50%);
 }
-.rail__arrow--prev {
-  left: -20px;
+.loved-card__add.is-added {
+  background: #fff;
+  color: var(--brand);
+  box-shadow: none;
 }
-.rail__arrow--next {
-  right: -20px;
+.loved-card__custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  min-height: 32px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgb(255 255 255 / 88%);
 }
-@media (max-width: 1260px) {
-  .rail__arrow--prev {
-    left: -8px;
+.loved-card__custom:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 1279px) {
+  .loved__track {
+    grid-auto-columns: calc((100% - 2 * 20px) / 3);
   }
-  .rail__arrow--next {
-    right: -8px;
+}
+@media (max-width: 1023px) {
+  .loved__track {
+    grid-auto-columns: calc((100% - 2 * 20px) / 2.4);
   }
 }
+/* Phones and small tablets: the slider runs edge to edge and snaps each card to the centre. */
 @media (max-width: 760px) {
-  .rail__arrow {
+  .loved__arrows {
     display: none;
   }
-  .rail__track {
-    grid-auto-columns: 72%;
+  .loved__track {
+    grid-auto-columns: 76%;
+    gap: 14px;
+    scroll-snap-type: x mandatory;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    scroll-padding-inline: 16px;
+  }
+  .loved__track.has-more {
+    mask-image: none;
+  }
+  .loved__track > * {
+    scroll-snap-align: center;
+  }
+  .loved-card {
+    border-radius: 24px;
+  }
+  .loved-card__rank {
+    font-size: 44px;
+  }
+}
+@media (min-width: 601px) and (max-width: 760px) {
+  .loved__track {
+    grid-auto-columns: 46%;
+    margin-inline: -24px;
+    padding-inline: 24px;
+    scroll-padding-inline: 24px;
   }
 }
 

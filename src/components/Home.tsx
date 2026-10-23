@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CATEGORIES, PRODUCTS, PRODUCT_BY_ID, type CategoryId, type Product } from '../data/menu'
+import { CATEGORIES, PRODUCTS, PRODUCT_BY_ID, type CategoryId } from '../data/menu'
 import { STORE_BY_ID } from '../data/stores'
 import { newKey } from '../lib/id'
 import { onShowMenuCategory, scrollToSection } from '../lib/dom'
@@ -11,6 +11,7 @@ import { Deals } from './Deals'
 import { FoodPhoto } from './FoodPhoto'
 import { Hero } from './Hero'
 import { Icon, type IconName } from './Icon'
+import { LovedRail } from './LovedRail'
 import { ProductCard } from './ProductCard'
 import { StoreWall } from './StoreWall'
 
@@ -84,34 +85,6 @@ function Toolbar({
         </form>
       </div>
     </div>
-  )
-}
-
-function Rail({ title, note, products }: { title: string; note: string; products: Product[] }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const scroll = (dir: number) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' })
-  return (
-    <section className="container section" aria-labelledby="rail-title">
-      <div className="section__head">
-        <h2 id="rail-title">{title}</h2>
-        <p className="section__note">
-          <Icon name="sparkle" size={14} /> {note}
-        </p>
-      </div>
-      <div className="rail">
-        <div className="rail__track" ref={ref}>
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} variant="feature" />
-          ))}
-        </div>
-        <button type="button" className="rail__arrow rail__arrow--prev" onClick={() => scroll(-1)} aria-label="Scroll back">
-          <Icon name="chevronLeft" />
-        </button>
-        <button type="button" className="rail__arrow rail__arrow--next" onClick={() => scroll(1)} aria-label="See more">
-          <Icon name="chevronRight" />
-        </button>
-      </div>
-    </section>
   )
 }
 
@@ -335,7 +308,7 @@ export function Home() {
     () => {
       gsap.matchMedia().add(MOTION_OK, () => {
         const targets = gsap.utils.toArray<HTMLElement>(
-          '.section__head, .menu__group-title, .panel, .how__head, .how__step, .product-card, .info-card',
+          '.section__head, .loved__head, .loved-card, .menu__group-title, .panel, .how__head, .how__step, .product-card, .info-card',
           scope.current,
         )
         gsap.set(targets, { opacity: 0, y: 36 })
@@ -367,7 +340,7 @@ export function Home() {
 
       {browsing && (
         <>
-          <Rail title={store ? `Most loved in ${store.city}` : 'Most loved right now'} note="Based on what people near you order" products={loved} />
+          <LovedRail title={store ? `Most loved in ${store.city}` : 'Most loved right now'} note="Based on what people near you order" products={loved} />
           <Deals
             onPickPizzas={() => {
               setCategory('pizza')
