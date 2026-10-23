@@ -2581,64 +2581,149 @@ button.info-card:hover {
 .site-footer {
   margin-top: 32px;
 }
-/* "Hungry?" banner that straddles the cream page and the dark footer */
+/* "Hungry?" banner that straddles the page and the dark footer */
 .footer-cta {
   position: relative;
   z-index: 2;
   overflow: hidden;
-  display: flex;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  min-height: 240px;
+  gap: 40px;
   margin-bottom: -100px;
-  padding: 40px 44px;
+  padding: 48px 64px 48px 56px;
   border-radius: 32px;
   color: #fff;
   background:
-    radial-gradient(circle at 80% 50%, rgb(255 255 255 / 10%), transparent 45%),
-    linear-gradient(120deg, var(--red) 0%, var(--red-strong) 55%, var(--red-deep) 100%);
-  box-shadow: 0 30px 60px rgb(227 24 55 / 30%);
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    radial-gradient(circle at 82% 50%, rgb(255 255 255 / 12%), transparent 38%),
+    linear-gradient(120deg, var(--red) 0%, var(--red-strong) 60%, var(--red-deep) 100%);
+  box-shadow: 0 30px 60px rgb(227 24 55 / 26%);
+}
+/* A fine inner border for a finished edge. */
+.footer-cta::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  z-index: -1;
+  border-radius: 24px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  pointer-events: none;
 }
 .footer-cta__copy {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
+  max-width: 600px;
 }
 .footer-cta__kicker {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 88%);
 }
 .footer-cta h2 {
-  margin-top: 8px;
-  font-size: clamp(28px, 3.4vw, 42px);
+  margin-top: 16px;
+  font-size: clamp(30px, 3.6vw, 46px);
   line-height: 1.05;
   letter-spacing: -0.035em;
+}
+/* A thin white underline under the promise. */
+.footer-cta__mark {
+  background: linear-gradient(#fff, #fff) left bottom / 100% 3px no-repeat;
+  padding-bottom: 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.footer-cta__sub {
+  max-width: 460px;
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 82%);
 }
 .footer-cta__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 26px;
+}
+.footer-cta__visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 300px;
+  height: 300px;
+}
+.footer-cta__orbit {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1.5px dashed rgb(255 255 255 / 38%);
 }
 .footer-cta__pizza {
-  position: absolute;
-  right: -40px;
-  top: 50%;
-  width: 320px;
-  height: 320px;
-  margin-top: -160px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   overflow: hidden;
-  border: 10px solid rgb(255 255 255 / 92%);
-  box-shadow: 0 30px 60px rgb(0 0 0 / 30%);
+  border: 8px solid #fff;
+  box-shadow: 0 26px 50px rgb(80 0 15 / 40%);
 }
 .footer-cta__pizza .photo {
-  transform: scale(1.1);
+  transform: scale(1.12);
+}
+.footer-cta__chip {
+  position: absolute;
+  left: -36px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 12px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 16px 30px rgb(80 0 15 / 25%);
+}
+.footer-cta__chip svg {
+  color: var(--red);
+}
+.footer-cta__chip > span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.footer-cta__chip strong {
+  font-size: 16px;
+}
+.footer-cta__chip small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.footer-cta__tile {
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  width: 64px;
+  rotate: 14deg;
+  filter: drop-shadow(0 12px 18px rgb(80 0 15 / 30%));
+}
+@media (max-width: 1023px) {
+  .footer-cta {
+    gap: 32px;
+    padding: 40px 44px;
+  }
+  .footer-cta__visual {
+    width: 220px;
+    height: 220px;
+  }
+  .footer-cta__tile {
+    width: 50px;
+  }
 }
 
 /* Dark main footer */
@@ -2859,18 +2944,25 @@ button.info-card:hover {
 }
 @media (max-width: 760px) {
   .footer-cta {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 32px 24px 150px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 36px;
+    padding: 36px 24px 40px;
     margin-bottom: -80px;
   }
-  .footer-cta__pizza {
-    top: auto;
-    bottom: -70px;
-    right: -30px;
-    width: 220px;
-    height: 220px;
-    margin-top: 0;
+  .footer-cta__copy {
+    justify-self: stretch;
+  }
+  .footer-cta__visual {
+    width: 210px;
+    height: 210px;
+  }
+  .footer-cta__chip {
+    left: -44px;
+    bottom: 6px;
+  }
+  .footer-cta__tile {
+    width: 50px;
   }
   .footer-cta__actions .btn {
     flex: 1 1 100%;

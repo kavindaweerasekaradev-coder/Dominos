@@ -8,6 +8,7 @@ import { navigate, type Route } from '../lib/router'
 import { useStore } from '../state/store'
 import { OPEN_HOURS, useOpenNow } from '../state/useOpenNow'
 import { useUi } from '../state/ui'
+import { DominoTile } from './Domino'
 import { FoodPhoto } from './FoodPhoto'
 import { Logo } from './Header'
 import { Icon, type IconName } from './Icon'
@@ -84,7 +85,10 @@ export function Footer({ route }: { route: Route }) {
               <p className="footer-cta__kicker">
                 <Icon name="flame" size={15} /> Hungry?
               </p>
-              <h2 id="footer-cta-title">Hot pizza at your door in about 30 minutes.</h2>
+              <h2 id="footer-cta-title">
+                Hot pizza at your door in <span className="footer-cta__mark">about 30 minutes.</span>
+              </h2>
+              <p className="footer-cta__sub">Free delivery over {lkr(FREE_DELIVERY_FROM)}. Prices include all taxes, and the best deal is applied for you.</p>
               <div className="footer-cta__actions">
                 <button type="button" className="btn btn--white btn--lg" onClick={() => goTo('menu')}>
                   Order now <Icon name="chevronRight" size={18} className="btn__arrow" />
@@ -94,8 +98,19 @@ export function Footer({ route }: { route: Route }) {
                 </a>
               </div>
             </div>
-            <div className="footer-cta__pizza" aria-hidden="true">
-              <FoodPhoto photo={PRODUCT_BY_ID['pepperoni-classic'].photo} width={520} />
+            <div className="footer-cta__visual" aria-hidden="true">
+              <span className="footer-cta__orbit" />
+              <div className="footer-cta__pizza">
+                <FoodPhoto photo={PRODUCT_BY_ID['pepperoni-classic'].photo} width={560} />
+              </div>
+              <span className="footer-cta__chip">
+                <Icon name="clock" size={16} />
+                <span>
+                  <strong>30 min</strong>
+                  <small>to your door</small>
+                </span>
+              </span>
+              <DominoTile pips={2} tone="white" className="footer-cta__tile" />
             </div>
           </section>
         </div>
