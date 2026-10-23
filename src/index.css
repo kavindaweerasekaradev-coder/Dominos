@@ -1577,32 +1577,34 @@ main:focus {
   color: var(--line-2);
 }
 
-/* Product card */
+/* Product card: the photo fills the card and the details sit on a dark gradient over it,
+   like the most-loved cards. */
 .product-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  isolation: isolate;
+  display: grid;
   overflow: hidden;
   border-radius: 24px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  transition:
-    box-shadow 0.25s,
-    border-color 0.25s;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 12px 28px rgb(10 30 45 / 14%);
+  transition: box-shadow 0.3s;
 }
 .product-card:hover {
-  border-color: var(--brand-line);
-  box-shadow: 0 22px 46px rgb(0 60 90 / 14%);
+  box-shadow: 0 22px 46px rgb(10 30 45 / 26%);
 }
-/* The photo sits inset in the card with its own rounded frame. */
+/* Sets a tall photo shape; the card grows past it when the details need more room. */
+.product-card::before {
+  content: '';
+  grid-area: 1 / 1;
+  padding-top: 150%;
+}
 .product-card__media {
-  position: relative;
-  aspect-ratio: 4 / 3.1;
-  margin: 8px 8px 0;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   overflow: hidden;
-  border-radius: 18px;
-  background: var(--bg-2);
+  background: var(--navy);
 }
 .product-card__media .photo {
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -1610,11 +1612,12 @@ main:focus {
 .product-card:hover .product-card__media .photo {
   transform: scale(1.08);
 }
+/* Darkens the lower part of the photo so the details read clearly. */
 .product-card__media::after {
   content: '';
   position: absolute;
-  inset: 60% 0 0;
-  background: linear-gradient(transparent, rgb(0 30 45 / 35%));
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 37 55 / 0%) 32%, rgb(0 37 55 / 70%) 54%, rgb(0 30 45 / 97%) 76%);
   pointer-events: none;
 }
 .product-card__media-link {
@@ -1656,15 +1659,12 @@ main:focus {
   font-size: 12px;
   font-weight: 800;
 }
-.product-card__tags {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 2;
+.product-card__meta {
+  display: flex;
+  min-height: 22px;
 }
-.product-card__tags .tag {
-  background: rgb(255 255 255 / 92%);
-  backdrop-filter: blur(4px);
+.product-card__meta:not(:has(.tag)) {
+  display: none;
 }
 .tags {
   display: flex;
@@ -1688,11 +1688,12 @@ main:focus {
   color: var(--red);
 }
 .product-card__body {
+  grid-area: 1 / 1;
+  align-self: end;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
-  padding: 14px 16px 14px;
+  padding: 76px 16px 14px;
 }
 .product-card__name {
   font-size: 19px;
@@ -1704,10 +1705,11 @@ main:focus {
   letter-spacing: inherit;
 }
 .product-card__name button:hover {
-  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .product-card__desc {
-  color: var(--muted);
+  color: rgb(255 255 255 / 76%);
   font-size: 13px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1722,9 +1724,10 @@ main:focus {
   gap: 4px;
   padding: 4px;
   border-radius: 12px;
-  background: var(--bg-2);
+  background: rgb(255 255 255 / 14%);
+  backdrop-filter: blur(6px);
 }
-/* A blue pill slides to the chosen size. */
+/* A white pill slides to the chosen size. */
 .size-pick::before {
   content: '';
   position: absolute;
@@ -1733,8 +1736,8 @@ main:focus {
   left: 4px;
   width: calc((100% - 16px) / 3);
   border-radius: 9px;
-  background: var(--brand);
-  box-shadow: 0 4px 10px rgb(0 100 145 / 28%);
+  background: #fff;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 18%);
   translate: calc(var(--i, 1) * (100% + 4px)) 0;
   transition: translate 0.32s cubic-bezier(0.3, 0.7, 0.2, 1);
 }
@@ -1744,14 +1747,14 @@ main:focus {
   border-radius: 9px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--ink-2);
+  color: rgb(255 255 255 / 82%);
   transition: color 0.2s;
 }
 .size-pick button:hover {
-  color: var(--brand);
+  color: #fff;
 }
 .size-pick button[aria-checked='true'] {
-  color: #fff;
+  color: var(--brand);
 }
 .product-card__foot {
   display: flex;
@@ -1838,6 +1841,20 @@ main:focus {
   font-size: 13px;
   min-height: 28px;
 }
+.product-card .price__cur,
+.product-card .price-note {
+  color: rgb(255 255 255 / 72%);
+}
+.product-card__extra {
+  border-top-color: rgb(255 255 255 / 22%);
+}
+.product-card .link-btn {
+  color: #fff;
+}
+.product-card .deal-hint {
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+}
 
 .grid {
   display: grid;
@@ -1859,12 +1876,8 @@ main:focus {
   .grid .product-card {
     border-radius: 18px;
   }
-  .grid .product-card__media {
-    margin: 6px 6px 0;
-    border-radius: 13px;
-  }
   .grid .product-card__body {
-    padding: 10px 10px 10px;
+    padding: 56px 10px 10px;
     gap: 6px;
   }
   .grid .product-card__name {
@@ -1872,7 +1885,7 @@ main:focus {
   }
   .grid .product-card__desc,
   .grid .deal-hint,
-  .grid .product-card__tags {
+  .grid .product-card__meta {
     display: none;
   }
   .grid .size-pick button {
@@ -1928,7 +1941,7 @@ main:focus {
     gap: 8px;
   }
   .grid .product-card__body {
-    padding: 8px 8px 9px;
+    padding: 48px 8px 9px;
   }
   .grid .price {
     font-size: 15px;

@@ -90,12 +90,12 @@ export function ProductCard({ product }: { product: Product }) {
             <span className="sr-only"> in cart</span>
           </span>
         )}
-        <span className="product-card__tags">
-          <TagList product={product} />
-        </span>
       </div>
 
       <div className="product-card__body">
+        <div className="product-card__meta">
+          <TagList product={product} />
+        </div>
         <h3 className="product-card__name">
           {isPizza ? (
             <button type="button" onClick={customise}>
