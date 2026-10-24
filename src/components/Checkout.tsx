@@ -151,23 +151,44 @@ export function Checkout() {
               <span className="num">1</span> {delivery ? 'Delivery details' : 'Pickup details'}
             </h2>
             <FulfilmentToggle value={state.fulfilment} onChange={(f) => dispatch({ type: 'setFulfilment', fulfilment: f })} />
-            <div className="store-summary">
-              <Icon name={delivery ? 'pin' : 'store'} />
-              <div>
-                {store ? (
-                  <>
-                    <strong>{delivery ? store.city : `${store.area} store`}</strong>
-                    <span className="muted small">{delivery ? `Prepared at our ${store.area} store` : store.address}</span>
-                  </>
-                ) : (
-                  <strong>{delivery ? 'No delivery area chosen' : 'No store chosen'}</strong>
-                )}
+            {store ? (
+              <div className="store-summary">
+                <span className="store-summary__icon">
+                  <Icon name={delivery ? 'pin' : 'store'} size={18} />
+                </span>
+                <span className="store-summary__text">
+                  <strong>{delivery ? store.city : `${store.area} store`}</strong>
+                  <span className="muted small">{delivery ? `Prepared at our ${store.area} store` : store.address}</span>
+                </span>
+                <button type="button" className="store-summary__change" onClick={() => setLocationOpen(true)}>
+                  <Icon name="pencil" size={14} /> Change
+                </button>
               </div>
-              <button type="button" className="btn btn--soft btn--sm" onClick={() => setLocationOpen(true)} aria-invalid={!!errors.location && !store}>
-                {store ? 'Change' : 'Choose'}
+            ) : (
+              <button
+                type="button"
+                className="store-summary is-empty"
+                onClick={() => setLocationOpen(true)}
+                aria-invalid={!!errors.location}
+                aria-describedby={errors.location ? 'e-location' : undefined}
+              >
+                <span className="store-summary__icon">
+                  <Icon name={delivery ? 'pin' : 'store'} size={18} />
+                </span>
+                <span className="store-summary__text">
+                  <strong>{delivery ? 'Choose your delivery area' : 'Choose a pickup store'}</strong>
+                  <span className="muted small">{delivery ? 'We’ll match you to your nearest Domino’s' : 'Pick the store closest to you'}</span>
+                </span>
+                <span className="store-summary__go" aria-hidden="true">
+                  <Icon name="chevronRight" size={18} />
+                </span>
               </button>
-            </div>
-            {errors.location && !store && <p className="field-error">{errors.location}</p>}
+            )}
+            {errors.location && !store && (
+              <p id="e-location" className="field-error">
+                {errors.location}
+              </p>
+            )}
             <EtaLine />
 
             {delivery && store && (

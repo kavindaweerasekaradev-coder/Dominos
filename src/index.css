@@ -5283,25 +5283,122 @@ button.info-card:hover .info-card__action svg {
   font-size: 14px;
   font-family: var(--font);
 }
+/* Where — a quiet card once chosen; until then the whole card is one big "choose" button. */
 .store-summary {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  min-height: 72px;
   border-radius: 14px;
-  background: var(--surface-2);
+  border: 1.5px solid var(--line);
+  background: #fff;
+  font: inherit;
+  color: var(--ink);
+  text-align: left;
 }
-.store-summary > svg {
+.store-summary__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--brand-soft);
   color: var(--brand);
 }
-.store-summary > div {
+.store-summary__text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
   flex: 1;
   min-width: 0;
+  line-height: 1.3;
 }
-.store-summary .btn[aria-invalid='true'] {
-  box-shadow: 0 0 0 2px var(--red);
+.store-summary__text strong {
+  font-size: 15px;
+}
+.store-summary__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.store-summary__change:hover {
+  background: var(--brand-soft);
+}
+.store-summary.is-empty {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--brand) 40%, #fff);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.store-summary.is-empty:hover {
+  border-style: solid;
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand-soft) 45%, #fff);
+}
+.store-summary__go {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  transition: translate 0.15s;
+}
+.store-summary.is-empty:hover .store-summary__go {
+  translate: 2px 0;
+}
+.store-summary.is-empty[aria-invalid='true'] {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red-soft) 50%, #fff);
+}
+.store-summary.is-empty[aria-invalid='true'] .store-summary__icon {
+  background: var(--red-soft);
+  color: var(--red-strong);
+}
+.store-summary.is-empty[aria-invalid='true'] .store-summary__go {
+  background: var(--red);
+}
+@media (max-width: 420px) {
+  .store-summary {
+    gap: 12px;
+    padding: 12px 12px 12px 14px;
+  }
+  .store-summary__icon {
+    width: 36px;
+    height: 36px;
+  }
+  .store-summary__change {
+    padding: 0 8px;
+  }
+}
+@media (max-width: 360px) {
+  .store-summary__change svg {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-summary__go {
+    transition: none;
+  }
 }
 .when,
 .pay-grid {
