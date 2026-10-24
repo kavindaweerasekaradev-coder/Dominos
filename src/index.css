@@ -2861,17 +2861,18 @@ main:focus {
 /* Info bar: where the order goes, and how to pay */
 .info-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
   padding-block: 12px 40px;
 }
 @media (max-width: 760px) {
   .info-bar {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 .info-card {
   position: relative;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -3018,6 +3019,18 @@ button.info-card:hover .info-card__action {
   }
   .info-card__action {
     padding: 8px 10px;
+  }
+}
+/* Smallest phones: the Change button moves under the text so the title keeps its room. */
+@media (max-width: 380px) {
+  .info-card--where {
+    flex-wrap: wrap;
+  }
+  .info-card--where .info-card__text {
+    flex-basis: calc(100% - 56px);
+  }
+  .info-card--where .info-card__action {
+    margin-left: 56px;
   }
 }
 
