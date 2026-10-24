@@ -4676,7 +4676,24 @@ button.info-card:hover {
   display: grid;
   gap: 10px;
 }
+/* The button hugs its label and price and sits on the right. */
+.place-bar__btn {
+  justify-self: end;
+  gap: 28px;
+  padding-inline: 28px;
+}
+.place-bar > .fine-print {
+  justify-content: flex-end;
+  text-align: right;
+}
 @media (max-width: 760px) {
+  .place-bar__btn {
+    justify-self: stretch;
+  }
+  .place-bar > .fine-print {
+    justify-content: center;
+    text-align: center;
+  }
   .place-bar {
     position: sticky;
     bottom: 0;

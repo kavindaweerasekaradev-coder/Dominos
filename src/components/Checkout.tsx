@@ -344,7 +344,7 @@ export function Checkout() {
                 </div>
               </div>
             )}
-            <button type="submit" className="btn btn--hot btn--block btn--lg btn--split" disabled={belowMin || paying}>
+            <button type="submit" className="btn btn--hot btn--lg btn--split place-bar__btn" disabled={belowMin || paying}>
               <span>{paying ? 'Confirming payment…' : payment === 'online' ? 'Pay & place order' : 'Place order'}</span>
               <span>{lkr(totals.total)}</span>
             </button>
