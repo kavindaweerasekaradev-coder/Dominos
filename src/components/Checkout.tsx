@@ -1,18 +1,20 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { STORE_BY_ID } from '../data/stores'
 import { formatPhone, normalisePhone } from '../lib/phone'
 import { MIN_DELIVERY_ORDER, lkr } from '../lib/pricing'
 import { navigate } from '../lib/router'
+import { CHANGE_CUTOFF_MINS, canOrderNow, dayLabel, firstOpenSlot, formatWhen, nextOpening, slotStillOpen, timeLabel } from '../lib/schedule'
 import { useStore, type PaymentMethod } from '../state/store'
 import { useUi } from '../state/ui'
 import { CartLines, DealBox, EtaLine, TotalsTable } from './CartParts'
 import { Icon, type IconName } from './Icon'
 import { FulfilmentToggle } from './LocationDialog'
 import { PaymentGateway } from './PaymentGateway'
+import { SchedulePicker } from './SchedulePicker'
 
 const newOrderId = () => `DLK-${Math.floor(10000 + Math.random() * 89999)}`
 
-type Errors = Partial<Record<'location' | 'address' | 'name' | 'phone' | 'email', string>>
+type Errors = Partial<Record<'location' | 'address' | 'when' | 'name' | 'phone' | 'email', string>>
 
 export function Checkout() {
   const { state, totals, dispatch } = useStore()
@@ -26,7 +28,7 @@ export function Checkout() {
   const [name, setName] = useState(state.contact?.name ?? '')
   const [phone, setPhone] = useState(state.contact ? formatPhone(state.contact.phone) : '')
   const [email, setEmail] = useState(state.contact?.email ?? '')
-  const [when, setWhen] = useState('asap')
+  const [when, setWhen] = useState<'asap' | number>('asap')
   const [payment, setPayment] = useState<PaymentMethod>('cash')
   const [errors, setErrors] = useState<Errors>({})
   const clearError = (k: keyof Errors) => errors[k] && setErrors((e) => ({ ...e, [k]: undefined }))
@@ -34,16 +36,12 @@ export function Checkout() {
   const addressError = address.trim().length < 5 ? errors.address : undefined
   // Online payments open the payment screen first; the order is placed once it succeeds.
   const [gateway, setGateway] = useState<{ id: string; phone: string } | null>(null)
-  const [slots] = useState(() => {
-    const out: string[] = []
-    const t = new Date()
-    t.setMinutes(Math.ceil((t.getMinutes() + 60) / 15) * 15, 0, 0)
-    for (let i = 0; i < 8; i++) {
-      out.push(t.toLocaleTimeString('en-LK', { hour: 'numeric', minute: '2-digit' }))
-      t.setMinutes(t.getMinutes() + 30)
-    }
-    return out
-  })
+  // A clock for the time picker, so past times drop out while the page is open.
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(Date.now()), 15_000)
+    return () => window.clearInterval(t)
+  }, [])
   const formRef = useRef<HTMLFormElement>(null)
 
   if (state.cart.length === 0) {
@@ -66,6 +64,16 @@ export function Checkout() {
   const delivery = state.fulfilment === 'delivery'
   const belowMin = delivery && totals.subtotal - (totals.applied?.saving ?? 0) < MIN_DELIVERY_ORDER
 
+  // Scheduling: the slowest time for this store is the lead time, so a booked slot is always achievable.
+  const leadMins = store ? (delivery ? store.deliveryMins[1] : store.pickupMins[1]) : 35
+  const storeId = store?.id ?? 'col-03'
+  const asapOk = canOrderNow(now, leadMins)
+  const firstOpen = firstOpenSlot(now, leadMins, storeId)
+  // When the kitchen can't take an order for now, ordering ahead is the default.
+  const scheduledAt = when !== 'asap' ? when : asapOk ? null : firstOpen
+  const later = scheduledAt != null
+  const opens = nextOpening(now)
+
   const payOptions: { id: PaymentMethod; label: string; note: string; icon: IconName }[] = [
     {
       id: 'cash',
@@ -82,6 +90,7 @@ export function Checkout() {
     const errs: Errors = {}
     if (!store) errs.location = delivery ? 'Choose your delivery area.' : 'Choose a pickup store.'
     if (delivery && address.trim().length < 5) errs.address = 'Add your house number and street so the rider can find you.'
+    if (later && !slotStillOpen(scheduledAt, now, leadMins, storeId)) errs.when = 'That time is no longer available. Pick another one.'
     if (name.trim().length < 2) errs.name = 'Tell us who the order is for.'
     const digits = normalisePhone(phone)
     if (!digits) errs.phone = 'Enter a 9-digit number after +94, for example 77 123 4567.'
@@ -113,6 +122,7 @@ export function Checkout() {
         totals,
         payment,
         contact: { name: name.trim(), phone: digits, email: email.trim() },
+        ...(scheduledAt != null && { scheduledFor: scheduledAt }),
       },
     })
     navigate(`/order/${id}`)
@@ -228,41 +238,61 @@ export function Checkout() {
               <span className="label" id="when-label">
                 When?
               </span>
+              {!asapOk && (
+                <p className="when__closed" role="status">
+                  <Icon name="clock" size={16} />
+                  <span>
+                    <strong>We’re closed right now.</strong> Order ahead and we’ll have it {delivery ? 'at your door' : 'hot and ready'} when you want it.
+                  </span>
+                </p>
+              )}
               <div className="when" role="radiogroup" aria-labelledby="when-label">
-                <label className={`choice when__opt ${when === 'asap' ? 'is-on' : ''}`}>
-                  <input type="radio" name="when" checked={when === 'asap'} onChange={() => setWhen('asap')} />
+                <label className={`choice when__opt ${!later ? 'is-on' : ''} ${!asapOk ? 'is-disabled' : ''}`}>
+                  <input type="radio" name="when" checked={!later} disabled={!asapOk} onChange={() => setWhen('asap')} />
                   <span className="choice__icon">
                     <Icon name="zap" size={18} />
                   </span>
                   <span className="choice__text">
                     <strong>As soon as possible</strong>
                     <span className="muted small">
-                      {store ? `About ${(delivery ? store.deliveryMins : store.pickupMins).join('–')} min` : 'Fastest available'}
+                      {!asapOk
+                        ? `Opens ${dayLabel(opens, now) === 'Today' ? '' : 'tomorrow '}at ${timeLabel(opens)}`
+                        : store
+                          ? `About ${(delivery ? store.deliveryMins : store.pickupMins).join('–')} min`
+                          : 'Fastest available'}
                     </span>
                   </span>
                   <span className="when__radio" aria-hidden="true" />
                 </label>
-                <label className={`choice when__opt ${when !== 'asap' ? 'is-on' : ''}`}>
-                  <input type="radio" name="when" checked={when !== 'asap'} onChange={() => setWhen(slots[0])} />
+                <label className={`choice when__opt ${later ? 'is-on' : ''}`}>
+                  <input type="radio" name="when" checked={later} onChange={() => firstOpen != null && setWhen(firstOpen)} />
                   <span className="choice__icon">
                     <Icon name="calendar" size={18} />
                   </span>
                   <span className="choice__text">
-                    <strong>Schedule for later</strong>
-                    <span className="muted small">{when === 'asap' ? 'Pick a time today' : `Today at ${when}`}</span>
+                    <strong>{delivery ? 'Schedule delivery' : 'Order ahead'}</strong>
+                    <span className="muted small">{scheduledAt != null ? formatWhen(scheduledAt, now) : 'Up to 7 days ahead'}</span>
                   </span>
                   <span className="when__radio" aria-hidden="true" />
                 </label>
               </div>
-              {when !== 'asap' && (
-                <div className="when__slots" role="radiogroup" aria-label={`${delivery ? 'Delivery' : 'Pickup'} time, today`}>
-                  {slots.map((s) => (
-                    <label key={s} className={`when__slot ${when === s ? 'is-on' : ''}`}>
-                      <input type="radio" name="slot" checked={when === s} onChange={() => setWhen(s)} />
-                      {s}
-                    </label>
-                  ))}
-                </div>
+              {later && (
+                <SchedulePicker
+                  value={scheduledAt}
+                  onChange={(at) => {
+                    setWhen(at)
+                    clearError('when')
+                  }}
+                  now={now}
+                  leadMins={leadMins}
+                  storeId={storeId}
+                  label={delivery ? 'Delivery time' : 'Pickup time'}
+                />
+              )}
+              {errors.when && (
+                <p id="e-when" className="field-error" role="alert">
+                  {errors.when}
+                </p>
               )}
             </div>
           </section>
@@ -397,11 +427,24 @@ export function Checkout() {
                 </div>
               </div>
             )}
+            {scheduledAt != null && (
+              <p className="place-bar__when">
+                <Icon name="calendar" size={18} />
+                <span>
+                  {delivery ? 'Arriving' : 'Ready'} <strong>{formatWhen(scheduledAt, now)}</strong>
+                  {store && <> · {delivery ? store.city : `${store.area} store`}</>}
+                </span>
+              </p>
+            )}
             <button type="submit" className="btn btn--hot btn--lg btn--split place-bar__btn" disabled={belowMin}>
-              <span>{payment === 'online' ? 'Continue to payment' : 'Place order'}</span>
+              <span>{payment === 'online' ? 'Continue to payment' : later ? 'Book order' : 'Place order'}</span>
               <span>{lkr(totals.total)}</span>
             </button>
-            <p className="fine-print center">Prices include all taxes. You’ll get live tracking as soon as you place the order.</p>
+            <p className="fine-print center">
+              {later
+                ? `Prices include all taxes. You can change the time or cancel up to ${CHANGE_CUTOFF_MINS} minutes before.`
+                : 'Prices include all taxes. You’ll get live tracking as soon as you place the order.'}
+            </p>
           </div>
         </form>
 

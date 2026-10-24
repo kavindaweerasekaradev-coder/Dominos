@@ -26,6 +26,9 @@ export interface Order {
   totals: Totals
   payment: PaymentMethod
   contact: Contact
+  /** Set for orders booked ahead: when the food should be ready (pickup) or arrive (delivery). */
+  scheduledFor?: number
+  cancelledAt?: number
 }
 
 interface State {
@@ -46,6 +49,7 @@ type Action =
   | { type: 'restoreCart'; cart: CartItem[] }
   | { type: 'setCoupon'; coupon: string | null }
   | { type: 'placeOrder'; order: Order }
+  | { type: 'updateOrder'; id: string; patch: Partial<Pick<Order, 'scheduledFor' | 'cancelledAt'>> }
 
 const STORAGE_KEY = 'dlk-state-v1'
 
@@ -116,6 +120,8 @@ function reducer(state: State, action: Action): State {
         contact: action.order.contact,
         orders: [action.order, ...state.orders].slice(0, 10),
       }
+    case 'updateOrder':
+      return { ...state, orders: state.orders.map((o) => (o.id === action.id ? { ...o, ...action.patch } : o)) }
   }
 }
 

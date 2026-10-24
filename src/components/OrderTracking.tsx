@@ -3,13 +3,27 @@ import { HOTLINE, STORE_BY_ID } from '../data/stores'
 import { PRODUCT_BY_ID } from '../data/menu'
 import { newKey } from '../lib/id'
 import { describeItem, lineTotal, lkr } from '../lib/pricing'
+import { CHANGE_CUTOFF_MINS, formatWhen, timeLabel } from '../lib/schedule'
 import { useStore } from '../state/store'
 import { useUi } from '../state/ui'
+import { Dialog } from './Dialog'
 import { FoodPhoto } from './FoodPhoto'
 import { Icon, type IconName } from './Icon'
+import { SchedulePicker } from './SchedulePicker'
 
 // Progress is sped up for the demo: each stage starts this many seconds after ordering.
 const STAGE_AT = [0, 15, 45, 90, 150]
+
+/** "in 2 days 4 h", "in 3 h 12 min", "in 12 min 05 s". */
+function countdown(ms: number) {
+  const s = Math.max(0, Math.round(ms / 1000))
+  const d = Math.floor(s / 86400)
+  const h = Math.floor((s % 86400) / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  if (d) return `${d} day${d > 1 ? 's' : ''} ${h} h`
+  if (h) return `${h} h ${m} min`
+  return `${m} min ${String(s % 60).padStart(2, '0')} s`
+}
 
 export function OrderTracking({ id }: { id: string }) {
   const { state, dispatch } = useStore()
@@ -17,6 +31,8 @@ export function OrderTracking({ id }: { id: string }) {
   const order = state.orders.find((o) => o.id === id)
   const [now, setNow] = useState(() => Date.now())
   const [help, setHelp] = useState<string | null>(null)
+  const [editing, setEditing] = useState<number | null>(null)
+  const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     const t = window.setInterval(() => setNow(Date.now()), 1000)
@@ -47,8 +63,16 @@ export function OrderTracking({ id }: { id: string }) {
 
   const store = STORE_BY_ID[order.location.storeId]
   const delivery = order.fulfilment === 'delivery'
+  const scheduled = order.scheduledFor
+  const cancelled = order.cancelledAt != null
+  // Booked orders go into the oven so they're ready at the chosen time.
+  const prepStart = scheduled ? scheduled - order.etaMins[1] * 60_000 : order.placedAt
+  const waiting = scheduled != null && now < prepStart
+  // Changes close 30 minutes before, or once the kitchen starts if that's sooner.
+  const canChange = scheduled != null && !cancelled && now < Math.min(prepStart, scheduled - CHANGE_CUTOFF_MINS * 60_000)
   const stages: { label: string; note: string; icon: IconName }[] = [
     { label: 'Order placed', note: 'We’ve got it', icon: 'receipt' },
+    ...(scheduled ? [{ label: 'Booked', note: `We’ll start making it at ${timeLabel(prepStart)}`, icon: 'calendar' as const }] : []),
     { label: 'Preparing', note: 'Fresh dough, your toppings', icon: 'sparkle' },
     { label: 'In the oven', note: 'Baking at 250°C', icon: 'flame' },
     delivery
@@ -56,10 +80,25 @@ export function OrderTracking({ id }: { id: string }) {
       : { label: 'Ready to collect', note: `At ${store.area} store`, icon: 'store' },
     delivery ? { label: 'Delivered', note: 'Enjoy!', icon: 'check' } : { label: 'Collected', note: 'Enjoy!', icon: 'check' },
   ]
-  const elapsed = (now - order.placedAt) / 1000
-  const current = STAGE_AT.reduce((acc, at, i) => (elapsed >= at ? i : acc), 0)
+  const elapsed = (now - prepStart) / 1000
+  const step = STAGE_AT.reduce((acc, at, i) => (elapsed >= at ? i : acc), 0)
+  const current = !scheduled ? step : waiting ? 1 : step + 1 + (step === 0 ? 1 : 0)
   const done = current === stages.length - 1
   const eta = (m: number) => new Date(order.placedAt + m * 60000).toLocaleTimeString('en-LK', { hour: 'numeric', minute: '2-digit' })
+  const firstName = order.contact.name.split(' ')[0]
+  const paidOnline = order.payment === 'online'
+
+  const saveTime = () => {
+    if (editing == null) return
+    dispatch({ type: 'updateOrder', id: order.id, patch: { scheduledFor: editing } })
+    showToast({ text: `Moved to ${formatWhen(editing, now)}` })
+    setEditing(null)
+  }
+  const cancel = () => {
+    dispatch({ type: 'updateOrder', id: order.id, patch: { cancelledAt: now } })
+    setCancelling(false)
+    showToast({ text: `Order ${order.id} cancelled` })
+  }
 
   const reorder = () => {
     order.items.forEach((i) => dispatch({ type: 'addItem', item: { ...i, key: newKey() } }))
@@ -71,30 +110,95 @@ export function OrderTracking({ id }: { id: string }) {
       <section className="card tracking__main" aria-labelledby="t-title">
         <p className="eyebrow">Order {order.id}</p>
         <h1 id="t-title">
-          {done ? (delivery ? 'Delivered. Enjoy your meal!' : 'Collected. Enjoy!') : `Thanks, ${order.contact.name.split(' ')[0]}! ${stages[current].label}…`}
+          {cancelled
+            ? 'Order cancelled'
+            : done
+              ? delivery
+                ? 'Delivered. Enjoy your meal!'
+                : 'Collected. Enjoy!'
+              : waiting
+                ? `You’re booked in, ${firstName}!`
+                : `Thanks, ${firstName}! ${stages[current].label}…`}
         </h1>
-        {!done && (
-          <p className="tracking__eta">
-            <Icon name="clock" size={20} />
-            {delivery ? 'Arriving' : 'Ready'} between <strong>{eta(order.etaMins[0])}</strong> and <strong>{eta(order.etaMins[1])}</strong>
-          </p>
+
+        {cancelled ? (
+          <div className="booking booking--cancelled" role="status">
+            <Icon name="x" size={20} />
+            <div>
+              <strong>Cancelled at {timeLabel(order.cancelledAt!)}.</strong>
+              <span>{paidOnline ? ` Your refund of ${lkr(order.totals.total)} will reach your card in 3–5 working days.` : ' Nothing to pay.'}</span>
+            </div>
+            <button type="button" className="btn btn--primary btn--sm" onClick={reorder}>
+              <Icon name="repeat" size={16} /> Order again
+            </button>
+          </div>
+        ) : (
+          <>
+            {scheduled && !done && (
+              <div className="booking">
+                <div className="booking__time">
+                  <span className="booking__label">{delivery ? 'Arriving' : 'Ready to collect'}</span>
+                  <strong>{timeLabel(scheduled)}</strong>
+                  <span>{new Date(scheduled).toLocaleDateString('en-LK', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                </div>
+                <div className="booking__info">
+                  <p className="booking__count" aria-live="off">
+                    <Icon name="clock" size={16} /> {now < scheduled ? `in ${countdown(scheduled - now)}` : 'Any minute now'}
+                  </p>
+                  <p className="muted small">{delivery ? `To ${order.location.address}, ${store.city}` : `${store.area} store · ${store.address}`}</p>
+                  {canChange ? (
+                    <div className="booking__actions">
+                      <button type="button" className="btn btn--soft btn--sm" onClick={() => setEditing(scheduled)}>
+                        <Icon name="pencil" size={15} /> Change time
+                      </button>
+                      <button type="button" className="link-btn booking__cancel" onClick={() => setCancelling(true)}>
+                        Cancel order
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="muted small">
+                      Too close to change online. Call the store on <a href={`tel:${HOTLINE.replace(/\s/g, '')}`}>{HOTLINE}</a>.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            {!scheduled && !done && (
+              <p className="tracking__eta">
+                <Icon name="clock" size={20} />
+                {delivery ? 'Arriving' : 'Ready'} between <strong>{eta(order.etaMins[0])}</strong> and <strong>{eta(order.etaMins[1])}</strong>
+              </p>
+            )}
+            <ol className="tracker" aria-label="Order progress">
+              {stages.map((s, i) => (
+                <li key={s.label} className={i < current ? 'is-done' : i === current ? 'is-on' : ''} aria-current={i === current ? 'step' : undefined}>
+                  <span className="tracker__dot">
+                    <Icon name={i < current ? 'check' : s.icon} size={18} />
+                  </span>
+                  <span className="tracker__text">
+                    <strong>{s.label}</strong>
+                    <span className="muted small">{s.note}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="fine-print">
+              <Icon name="info" size={14} /> Demo: progress is sped up. Bookmark this page to come back to it.
+              {waiting && (
+                <>
+                  {' '}
+                  <button
+                    type="button"
+                    className="link-btn"
+                    onClick={() => dispatch({ type: 'updateOrder', id: order.id, patch: { scheduledFor: now + order.etaMins[1] * 60_000 } })}
+                  >
+                    Start preparing now
+                  </button>
+                </>
+              )}
+            </p>
+          </>
         )}
-        <ol className="tracker" aria-label="Order progress">
-          {stages.map((s, i) => (
-            <li key={s.label} className={i < current ? 'is-done' : i === current ? 'is-on' : ''} aria-current={i === current ? 'step' : undefined}>
-              <span className="tracker__dot">
-                <Icon name={i < current ? 'check' : s.icon} size={18} />
-              </span>
-              <span className="tracker__text">
-                <strong>{s.label}</strong>
-                <span className="muted small">{s.note}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="fine-print">
-          <Icon name="info" size={14} /> Demo: progress is sped up. Bookmark this page to come back to it.
-        </p>
 
         <div className="tracking__where">
           <div>
@@ -183,6 +287,50 @@ export function OrderTracking({ id }: { id: string }) {
           </dl>
         </section>
       </aside>
+      {editing != null && (
+        <Dialog
+          open
+          onClose={() => setEditing(null)}
+          title={delivery ? 'Change delivery time' : 'Change pickup time'}
+          className="sched-dialog"
+          footer={
+            <button type="button" className="btn btn--primary btn--lg btn--block" onClick={saveTime} disabled={editing === scheduled}>
+              Save {formatWhen(editing, now)}
+            </button>
+          }
+        >
+          <SchedulePicker
+            value={editing}
+            onChange={setEditing}
+            now={now}
+            leadMins={order.etaMins[1]}
+            storeId={store.id}
+            label={delivery ? 'Delivery time' : 'Pickup time'}
+          />
+        </Dialog>
+      )}
+      {cancelling && (
+        <Dialog
+          open
+          onClose={() => setCancelling(false)}
+          title={`Cancel order ${order.id}?`}
+          footer={
+            <div className="confirm-actions">
+              <button type="button" className="btn btn--soft btn--lg" onClick={() => setCancelling(false)} data-autofocus>
+                Keep my order
+              </button>
+              <button type="button" className="btn btn--hot btn--lg" onClick={cancel}>
+                Cancel order
+              </button>
+            </div>
+          }
+        >
+          <p className="muted">
+            Your {delivery ? 'delivery' : 'pickup'} for {formatWhen(scheduled ?? now, now)} will be cancelled.
+            {paidOnline ? ` We’ll refund ${lkr(order.totals.total)} to your card within 3–5 working days.` : ' You won’t be charged.'}
+          </p>
+        </Dialog>
+      )}
     </main>
   )
 }

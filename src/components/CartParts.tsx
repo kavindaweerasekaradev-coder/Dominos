@@ -177,29 +177,31 @@ export function Progress({ totals }: { totals: Totals }) {
 export function TotalsTable({ totals }: { totals: Totals }) {
   const { state } = useStore()
   return (
-    <dl className="totals">
-      <div>
-        <dt>Subtotal</dt>
-        <dd>{lkr(totals.subtotal)}</dd>
-      </div>
-      {totals.applied && (
-        <div className="totals__save">
-          <dt>Deal: {totals.applied.deal.code}</dt>
-          <dd>−{lkr(totals.applied.saving)}</dd>
+    <>
+      <dl className="totals">
+        <div>
+          <dt>Subtotal</dt>
+          <dd>{lkr(totals.subtotal)}</dd>
         </div>
-      )}
-      <div>
-        <dt>{state.fulfilment === 'delivery' ? 'Delivery fee' : 'Pickup'}</dt>
-        <dd>{totals.deliveryFee ? lkr(totals.deliveryFee) : 'Free'}</dd>
-      </div>
-      <div className="totals__grand">
-        <dt>Total</dt>
-        <dd>{lkr(totals.total)}</dd>
-      </div>
+        {totals.applied && (
+          <div className="totals__save">
+            <dt>Deal: {totals.applied.deal.code}</dt>
+            <dd>−{lkr(totals.applied.saving)}</dd>
+          </div>
+        )}
+        <div>
+          <dt>{state.fulfilment === 'delivery' ? 'Delivery fee' : 'Pickup'}</dt>
+          <dd>{totals.deliveryFee ? lkr(totals.deliveryFee) : 'Free'}</dd>
+        </div>
+        <div className="totals__grand">
+          <dt>Total</dt>
+          <dd>{lkr(totals.total)}</dd>
+        </div>
+      </dl>
       <p className="fine-print">
         <Icon name="receipt" size={13} /> Includes all taxes. No service charge.
       </p>
-    </dl>
+    </>
   )
 }
 
