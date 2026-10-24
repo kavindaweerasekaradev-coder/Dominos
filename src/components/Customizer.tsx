@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import {
   CRUSTS,
   EXTRA_CHEESE_PRICE,
@@ -87,6 +87,9 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
       className="customizer"
       footer={
         <div className="customizer__foot">
+          <p className="customizer__summary" aria-live="polite">
+            <Icon name="pizza" size={15} /> {describeItem(item)}
+          </p>
           <div className="qty" aria-label="Quantity">
             <button type="button" className="qty__btn" onClick={() => update({ qty: Math.max(1, draft.qty - 1) })} disabled={draft.qty <= 1} aria-label="Fewer">
               <Icon name="minus" size={18} />
@@ -98,7 +101,7 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
               <Icon name="plus" size={18} />
             </button>
           </div>
-          <button type="button" className="btn btn--primary btn--grow" onClick={submit}>
+          <button type="button" className="btn btn--hot btn--lg btn--grow" onClick={submit}>
             <span>{editing ? 'Update item' : 'Add to cart'}</span>
             <span className="btn__price" aria-live="polite">
               {lkr(unit * draft.qty)}
@@ -109,27 +112,30 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
     >
       <div className="customizer__hero">
         <div className="customizer__art">
-          <FoodPhoto photo={product.photo} width={360} />
+          <FoodPhoto photo={product.photo} width={720} />
         </div>
-        <div>
-          <p className="eyebrow">{editing ? 'Edit your pizza' : 'Make it yours'}</p>
-          <p className="muted">{product.description}</p>
+        <div className="customizer__hero-text">
+          <span className="customizer__kicker">{editing ? 'Edit your pizza' : 'Make it yours'}</span>
+          <p>{product.description}</p>
           <TagList product={product} />
         </div>
       </div>
 
       <fieldset className="opt-group">
         <legend>
-          Size <span className="req">Required</span>
+          <span className="opt-step">1</span> Size <span className="req">Required</span>
         </legend>
         <div className="size-grid">
           {SIZES.map((s) => (
             <label key={s.id} className={`size-opt ${draft.size === s.id ? 'is-on' : ''}`}>
               <input type="radio" name="size" checked={draft.size === s.id} onChange={() => update({ size: s.id })} />
-              <svg viewBox="0 0 40 40" width={18 + s.inches * 1.6} height={18 + s.inches * 1.6} aria-hidden="true">
-                <circle className="size-opt__crust" cx="20" cy="20" r="18" />
-                <circle className="size-opt__top" cx="20" cy="20" r="14" />
-              </svg>
+              {/* The pizza itself, drawn at its relative size. */}
+              <span className="size-opt__pie" style={{ '--d': `${28 + s.inches * 4}px` } as CSSProperties} aria-hidden="true">
+                <FoodPhoto photo={product.photo} width={160} />
+              </span>
+              <span className="size-opt__tick" aria-hidden="true">
+                <Icon name="check" size={12} />
+              </span>
               <strong>{s.label}</strong>
               <span className="muted small">
                 {s.inches}″ · {s.serves}
@@ -141,7 +147,9 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
       </fieldset>
 
       <fieldset className="opt-group">
-        <legend>Crust</legend>
+        <legend>
+          <span className="opt-step">2</span> Crust
+        </legend>
         <div className="crust-grid">
           {CRUSTS.map((c) => (
             <label key={c.id} className={`choice ${draft.crust === c.id ? 'is-on' : ''}`}>
@@ -150,7 +158,9 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
                 <strong>{c.label}</strong>
                 <span className="muted small">{c.note}</span>
               </span>
-              <span className="choice__price">{c.extra[draft.size] ? `+${lkr(c.extra[draft.size])}` : 'Included'}</span>
+              <span className={`choice__price ${c.extra[draft.size] ? 'is-extra' : ''}`}>
+                {c.extra[draft.size] ? `+${lkr(c.extra[draft.size])}` : 'Included'}
+              </span>
             </label>
           ))}
         </div>
@@ -158,7 +168,7 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
 
       <fieldset className="opt-group">
         <legend>
-          Extra toppings <span className="muted small">+{lkr(EXTRA_TOPPING_PRICE[draft.size])} each</span>
+          <span className="opt-step">3</span> Extras <span className="muted small">Toppings +{lkr(EXTRA_TOPPING_PRICE[draft.size])} each</span>
         </legend>
         <div className="chip-wrap">
           {toppingOptions.map((t) => (
@@ -169,8 +179,9 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
             </label>
           ))}
         </div>
-        <label className={`choice choice--inline ${draft.extraCheese ? 'is-on' : ''}`}>
-          <input type="checkbox" checked={draft.extraCheese} onChange={() => update({ extraCheese: !draft.extraCheese })} />
+        <label className={`choice choice--inline choice--switch ${draft.extraCheese ? 'is-on' : ''}`}>
+          <input type="checkbox" role="switch" checked={draft.extraCheese} onChange={() => update({ extraCheese: !draft.extraCheese })} />
+          <span className="switch" aria-hidden="true" />
           <span className="choice__text">
             <strong>Extra mozzarella</strong>
             <span className="muted small">Double the cheese pull</span>

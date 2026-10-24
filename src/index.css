@@ -4265,31 +4265,64 @@ button.info-card:hover .info-card__action svg {
 .customizer {
   width: min(640px, 100%);
 }
-.customizer__hero {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 20px;
-  align-items: center;
-}
-.customizer__art {
-  border-radius: 20px;
-  background: var(--bg-2);
-  aspect-ratio: 1;
-  overflow: hidden;
-}
-.customizer__hero .tags {
-  margin-top: 10px;
-}
 .customizer .dialog__title {
   font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.customizer .dialog__body {
+  gap: 26px;
+}
+/* Wide photo banner with the description laid over a soft fade. */
+.customizer__hero {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  aspect-ratio: 16 / 8;
+  background: var(--navy);
+  color: #fff;
+}
+.customizer__art {
+  position: absolute;
+  inset: 0;
+}
+.customizer__art .photo {
+  transform: scale(1.04);
+}
+.customizer__hero-text {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 60px 20px 18px;
+  background: linear-gradient(180deg, transparent, rgb(0 30 45 / 80%) 50%, rgb(0 25 38 / 95%));
+}
+.customizer__kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 85%);
+}
+.customizer__hero-text p {
+  max-width: 440px;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+.customizer__hero .tags {
+  margin-top: 4px;
+}
+.customizer__hero .tag {
+  background: rgb(255 255 255 / 92%);
 }
 @media (max-width: 520px) {
   .customizer__hero {
-    grid-template-columns: 110px 1fr;
-    gap: 14px;
+    aspect-ratio: 4 / 3;
   }
-  .customizer__hero .muted {
-    font-size: 13px;
+  .customizer__hero-text p {
+    font-size: 13.5px;
   }
 }
 .opt-group {
@@ -4300,18 +4333,33 @@ button.info-card:hover .info-card__action svg {
 }
 .opt-group legend {
   font-family: var(--display);
-  font-weight: 650;
-  font-size: 17px;
-  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 12px;
   padding: 0;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   width: 100%;
 }
 .opt-group legend .muted {
   font-family: var(--font);
+  font-size: 13px;
   font-weight: 600;
+  margin-left: auto;
+}
+/* Numbered step badge before each heading. */
+.opt-step {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 800;
 }
 .req {
   font-family: var(--font);
@@ -4334,53 +4382,169 @@ button.info-card:hover .info-card__action svg {
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
-  padding: 12px 8px;
-  min-height: 140px;
-  border-radius: 16px;
+  padding: 14px 8px 12px;
+  min-height: 168px;
+  border-radius: 18px;
   border: 1.5px solid var(--line);
   background: #fff;
   text-align: center;
   cursor: pointer;
   transition:
-    border-color 0.15s,
-    background 0.15s;
-}
-.size-opt svg {
-  margin-bottom: auto;
-}
-.size-opt__crust {
-  fill: var(--brand-line);
-  transition: fill 0.15s;
-}
-.size-opt__top {
-  fill: #fff;
-}
-.size-opt.is-on .size-opt__crust {
-  fill: var(--brand);
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s,
+    translate 0.2s;
 }
 .size-opt:hover {
   border-color: var(--line-2);
+  translate: 0 -2px;
 }
 .size-opt.is-on {
   border-color: var(--brand);
-  background: var(--brand-soft);
+  background: linear-gradient(180deg, #fff, var(--brand-soft));
+  box-shadow: 0 10px 22px rgb(0 100 145 / 14%);
+}
+/* The pizza photo as a circle, sized by its real diameter. */
+.size-opt__pie {
+  display: block;
+  width: var(--d);
+  height: var(--d);
+  margin: auto 0 10px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 4px var(--line),
+    0 8px 16px rgb(10 30 45 / 18%);
+  filter: saturate(0.7);
+  transition:
+    filter 0.25s,
+    scale 0.35s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.25s;
+}
+.size-opt__pie .photo {
+  transform: scale(1.35);
+}
+.size-opt.is-on .size-opt__pie {
+  filter: none;
+  scale: 1.06;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 5px var(--brand),
+    0 10px 20px rgb(0 100 145 / 25%);
+}
+.size-opt__tick {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-2);
+  color: transparent;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.size-opt.is-on .size-opt__tick {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
 }
 .size-opt__price {
   margin-top: 4px;
+  font-family: var(--display);
+  font-size: 17px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+.size-opt.is-on .size-opt__price {
+  color: var(--brand);
 }
 .crust-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+/* Crust and extra-cheese cards in the customiser: a radio dot and a price pill. */
+.customizer .choice {
+  padding: 14px 14px 14px 46px;
+  border-radius: 16px;
+}
+.customizer .choice::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-2);
+  background: #fff;
+  transition:
+    border 0.15s,
+    box-shadow 0.15s;
+}
+.customizer .choice.is-on::before {
+  border: 5.5px solid var(--brand);
+}
+.customizer .choice.is-on {
+  background: linear-gradient(180deg, #fff, var(--brand-soft));
+  box-shadow: 0 8px 18px rgb(0 100 145 / 12%);
+}
+.customizer .choice__price {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  font-size: 12px;
+}
+.customizer .choice__price.is-extra {
+  background: var(--red-soft);
+  color: var(--red-strong);
+}
+/* Extra cheese as an on/off switch instead of a radio. */
+.customizer .choice--switch {
+  padding-left: 14px;
+}
+.customizer .choice--switch::before {
+  display: none;
+}
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--line-2);
+  transition: background 0.2s;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  transition: translate 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.choice--switch.is-on .switch {
+  background: var(--brand);
+}
+.choice--switch.is-on .switch::after {
+  translate: 18px 0;
+}
 @media (max-width: 520px) {
   .crust-grid {
     grid-template-columns: 1fr;
   }
   .size-opt {
-    min-height: 128px;
+    min-height: 150px;
   }
 }
 .chip-wrap {
@@ -4394,15 +4558,36 @@ button.info-card:hover .info-card__action svg {
   border-radius: 999px;
   padding: 0 14px;
 }
+.chip--check {
+  min-height: 38px;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
 .chip--check.is-on {
-  background: var(--brand-soft);
+  background: var(--brand);
   border-color: var(--brand);
-  color: var(--brand-strong);
+  color: #fff;
+  box-shadow: 0 4px 10px rgb(0 100 145 / 22%);
 }
 .customizer__foot {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px 12px;
   align-items: center;
+}
+.customizer__summary {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.customizer__summary svg {
+  color: var(--red);
 }
 .qty {
   display: inline-flex;
