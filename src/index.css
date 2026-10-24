@@ -5608,6 +5608,7 @@ button.info-card:hover {
   max-width: 88px;
   max-height: 40px;
   object-fit: contain;
+  border-radius: 10px;
 }
 .pay-wallet[aria-checked='true'] .pay-wallet__mark {
   background: var(--brand);

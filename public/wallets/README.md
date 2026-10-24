@@ -1,7 +1,7 @@
 # Wallet logos
 
-Put the official logos here with these exact file names. The payment screen shows them in the
-Mobile wallet tab; until a file is added, a lettered badge shows in its place.
+The payment screen shows these in its Mobile wallet tab. If a file is missing, a lettered badge
+shows in its place.
 
 | Wallet  | File name    |
 | ------- | ------------ |
@@ -9,5 +9,7 @@ Mobile wallet tab; until a file is added, a lettered badge shows in its place.
 | eZ Cash | `ezcash.png` |
 | FriMi   | `frimi.png`  |
 
-Use the logo files your payment gateway provides in its merchant kit, or the official brand assets
-from each wallet. Transparent PNGs work best; they are shown up to 88 × 40 px on a white tile.
+The current files are the payment-method logos from PayHere's official iOS SDK
+(github.com/PayHereLK/payhere-mobilesdk-ios, `PayHereSDK/Sources/Resources/Assets/image.xcassets`).
+The logos are trademarks of their owners and are shown here only to mark the accepted payment
+methods. When you sign up with a payment gateway, swap in the logo files from its merchant kit.
