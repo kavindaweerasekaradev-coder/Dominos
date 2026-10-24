@@ -5675,6 +5675,8 @@ button.info-card:hover {
 .pay-back {
   justify-self: center;
   color: var(--muted);
+  /* Sits 12px under the pay button instead of the form's 24px. */
+  margin-top: -12px;
 }
 .pay-otp {
   display: grid;
