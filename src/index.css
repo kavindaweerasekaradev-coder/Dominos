@@ -4029,10 +4029,19 @@ button.info-card:hover {
 .choice.is-on .choice__icon {
   background: #fff;
 }
+/* Custom chevron so the arrow has proper breathing room from the edge. */
 .choice select {
   width: auto;
   height: 40px;
+  padding: 0 40px 0 14px;
   font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23006491' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 14px center / 16px;
 }
 .choice--inline {
   margin-top: 10px;
