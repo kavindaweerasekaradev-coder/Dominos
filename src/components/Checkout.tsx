@@ -325,11 +325,29 @@ export function Checkout() {
           </section>
 
           <div className="place-bar">
-            <button type="submit" className="btn btn--primary btn--block btn--lg btn--split" disabled={belowMin || paying}>
+            {belowMin && (
+              <div className="min-warn" role="status">
+                <p>
+                  <Icon name="info" size={16} />
+                  <span>
+                    Add <strong>{lkr(MIN_DELIVERY_ORDER - (totals.subtotal - (totals.applied?.saving ?? 0)))}</strong> more for delivery (minimum{' '}
+                    {lkr(MIN_DELIVERY_ORDER)}), or pick it up yourself.
+                  </span>
+                </p>
+                <div className="min-warn__actions">
+                  <button type="button" className="btn btn--hot btn--sm" onClick={() => dispatch({ type: 'setFulfilment', fulfilment: 'pickup' })}>
+                    <Icon name="store" size={16} /> Switch to pickup
+                  </button>
+                  <a className="btn btn--soft btn--sm" href="#/">
+                    <Icon name="plus" size={16} /> Add more items
+                  </a>
+                </div>
+              </div>
+            )}
+            <button type="submit" className="btn btn--hot btn--block btn--lg btn--split" disabled={belowMin || paying}>
               <span>{paying ? 'Confirming payment…' : payment === 'online' ? 'Pay & place order' : 'Place order'}</span>
               <span>{lkr(totals.total)}</span>
             </button>
-            {belowMin && <p className="small center hint--warn">Delivery minimum is {lkr(MIN_DELIVERY_ORDER)}. Add a little more or switch to pickup.</p>}
             <p className="fine-print center">Prices include all taxes. You’ll get live tracking as soon as you place the order.</p>
           </div>
         </form>

@@ -126,6 +126,12 @@ button {
 button:disabled {
   cursor: not-allowed;
 }
+/* A disabled button must look disabled, not just ignore clicks. */
+.btn.btn:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  filter: saturate(0.6);
+}
 a {
   color: inherit;
 }
@@ -5301,4 +5307,31 @@ button.info-card:hover {
 }
 .cart-trust svg {
   color: var(--brand);
+}
+
+/* Checkout: delivery minimum not reached */
+.min-warn {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--red-soft);
+  border: 1px solid var(--red-line);
+  color: var(--red-deep);
+  font-size: 14px;
+}
+.min-warn p {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  line-height: 1.45;
+}
+.min-warn p svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.min-warn__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

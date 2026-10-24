@@ -35,7 +35,6 @@ export function CartDrawer() {
             <button
               type="button"
               className="btn btn--hot btn--lg btn--block cart-checkout"
-              disabled={belowMin}
               onClick={() => {
                 setCartOpen(false)
                 navigate('/checkout')
@@ -47,7 +46,12 @@ export function CartDrawer() {
               <span className="cart-checkout__total">{lkr(totals.total)}</span>
             </button>
             {belowMin ? (
-              <p className="small muted center">Add a little more to reach the delivery minimum, or switch to pickup.</p>
+              <p className="cart-trust">
+                Below the delivery minimum.{' '}
+                <button type="button" className="link-btn link-btn--sm" onClick={() => dispatch({ type: 'setFulfilment', fulfilment: 'pickup' })}>
+                  Switch to pickup
+                </button>
+              </p>
             ) : (
               <p className="cart-trust">
                 <Icon name="shield" size={14} /> Secure checkout · Cash, card or online
