@@ -3146,13 +3146,25 @@ button.info-card:hover .info-card__action svg {
 
 /* Dark main footer */
 .footer-main {
+  position: relative;
+  isolation: isolate;
   padding-top: 148px;
   color: rgb(255 255 255 / 76%);
-  background:
-    var(--domino-pattern-light) 0 0 / 120px 120px,
-    linear-gradient(180deg, #004c70 0%, var(--navy) 60%, #00263a 100%);
+  background: linear-gradient(180deg, #004c70 0%, var(--navy) 60%, #00263a 100%);
   border-radius: 40px 40px 0 0;
   overflow: hidden;
+}
+/* Hand-drawn ingredient doodles, like the walls in Domino's stores. Kept soft so the text stays clear,
+   and faded towards the middle where the links sit. */
+.footer-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('./assets/ingredients.svg') 0 0 / 300px 300px;
+  opacity: 0.7;
+  mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 35%) 30%, rgb(0 0 0 / 35%) 72%, #000 100%);
+  pointer-events: none;
 }
 .site-footer:not(:has(.footer-cta)) .footer-main {
   padding-top: 56px;
