@@ -4679,8 +4679,12 @@ button.info-card:hover {
 /* The button hugs its label and price and sits on the right. */
 .place-bar__btn {
   justify-self: end;
-  gap: 28px;
-  padding-inline: 28px;
+  gap: 24px;
+  padding-inline: 24px;
+}
+/* 24px between the delivery-minimum box and the button. */
+.place-bar > .min-warn {
+  margin-bottom: 14px;
 }
 .place-bar > .fine-print {
   justify-content: flex-end;
