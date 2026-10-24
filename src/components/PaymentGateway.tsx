@@ -132,6 +132,19 @@ export function PaymentGateway({
   const [expiry, setExpiry] = useState('')
   const [cvv, setCvv] = useState('')
   const [flipped, setFlipped] = useState(false)
+  // Which part of the card preview to highlight while its field is being filled in.
+  const [focus, setFocus] = useState<'number' | 'name' | 'expiry' | null>(null)
+  const tilt = useRef<HTMLDivElement>(null)
+  const onTilt = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse' || !tilt.current) return
+    const r = tilt.current.getBoundingClientRect()
+    tilt.current.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - 0.5) * 16}deg`)
+    tilt.current.style.setProperty('--rx', `${-((e.clientY - r.top) / r.height - 0.5) * 12}deg`)
+  }
+  const resetTilt = () => {
+    tilt.current?.style.setProperty('--rx', '0deg')
+    tilt.current?.style.setProperty('--ry', '0deg')
+  }
   const [wallet, setWallet] = useState(WALLETS[0])
   const [walletPhone, setWalletPhone] = useState(formatPhone(phone))
   const [otp, setOtp] = useState('')
@@ -292,43 +305,50 @@ export function PaymentGateway({
 
           {method === 'card' && (
             <>
-              <div className={`pay-card ${flipped ? 'is-flipped' : ''}`} aria-hidden="true">
-                <div className="pay-card__face pay-card__front">
-                  <svg className="pay-card__waves" viewBox="0 0 320 200" preserveAspectRatio="none">
-                    {Array.from({ length: 9 }, (_, i) => (
-                      <path key={i} d={`M-20 ${150 - i * 14} C 80 ${60 - i * 10}, 190 ${230 - i * 16}, 340 ${70 - i * 8}`} />
-                    ))}
-                  </svg>
-                  <div className="pay-card__top">
-                    <span className="pay-card__chip-row">
-                      <span className="pay-card__chip">
-                        <i />
-                      </span>
-                      <svg className="pay-card__nfc" viewBox="0 0 24 24">
-                        <path d="M8.5 8a5.5 5.5 0 0 1 0 8 M12 5.5a9 9 0 0 1 0 13 M15.5 3a12.5 12.5 0 0 1 0 18" />
+              <div className="pay-card-float">
+                <div ref={tilt} className="pay-card-tilt" onPointerMove={onTilt} onPointerLeave={resetTilt}>
+                  <div className={`pay-card ${flipped ? 'is-flipped' : ''} ${focus ? `is-focus-${focus}` : ''}`} aria-hidden="true">
+                    <div className="pay-card__face pay-card__front">
+                      <span className="pay-card__shine" />
+                      <svg className="pay-card__waves" viewBox="0 0 320 200" preserveAspectRatio="none">
+                        {Array.from({ length: 9 }, (_, i) => (
+                          <path key={i} d={`M-20 ${150 - i * 14} C 80 ${60 - i * 10}, 190 ${230 - i * 16}, 340 ${70 - i * 8}`} />
+                        ))}
                       </svg>
-                    </span>
-                    <span className="pay-card__brand">{brand ? BRAND_LABEL[brand] : ''}</span>
+                      <div className="pay-card__top">
+                        <span className="pay-card__chip-row">
+                          <span className="pay-card__chip">
+                            <i />
+                          </span>
+                          <svg className="pay-card__nfc" viewBox="0 0 24 24">
+                            <path d="M8.5 8a5.5 5.5 0 0 1 0 8 M12 5.5a9 9 0 0 1 0 13 M15.5 3a12.5 12.5 0 0 1 0 18" />
+                          </svg>
+                        </span>
+                        <span key={brand ?? 'none'} className="pay-card__brand">
+                          {brand ? BRAND_LABEL[brand] : ''}
+                        </span>
+                      </div>
+                      <span className="pay-card__number">{num ? groupCard(num, brand) : '•••• •••• •••• ••••'}</span>
+                      <div className="pay-card__bottom">
+                        <span className="pay-card__holder">
+                          <small>Card holder</small>
+                          <b className="pay-card__name">{name.trim() || 'YOUR NAME'}</b>
+                        </span>
+                        <span className="pay-card__expiry">
+                          <small>Valid thru</small>
+                          {expiry || 'MM/YY'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="pay-card__face pay-card__back">
+                      <span className="pay-card__stripe" />
+                      <div className="pay-card__sign">
+                        <span />
+                        <b>{cvv.replace(/./g, '•') || '•••'}</b>
+                      </div>
+                      <span className="pay-card__back-note">Security code</span>
+                    </div>
                   </div>
-                  <span className="pay-card__number">{num ? groupCard(num, brand) : '•••• •••• •••• ••••'}</span>
-                  <div className="pay-card__bottom">
-                    <span>
-                      <small>Card holder</small>
-                      {name.trim() || 'YOUR NAME'}
-                    </span>
-                    <span>
-                      <small>Valid thru</small>
-                      {expiry || 'MM/YY'}
-                    </span>
-                  </div>
-                </div>
-                <div className="pay-card__face pay-card__back">
-                  <span className="pay-card__stripe" />
-                  <div className="pay-card__sign">
-                    <span />
-                    <b>{cvv.replace(/./g, '•') || '•••'}</b>
-                  </div>
-                  <span className="pay-card__back-note">Security code</span>
                 </div>
               </div>
 
@@ -337,6 +357,8 @@ export function PaymentGateway({
                 <div className="pay-input">
                   <input
                     id="pay-num"
+                    onFocus={() => setFocus('number')}
+                    onBlur={() => setFocus(null)}
                     inputMode="numeric"
                     autoComplete="cc-number"
                     value={number}
@@ -357,6 +379,8 @@ export function PaymentGateway({
                 <label htmlFor="pay-name">Name on card</label>
                 <input
                   id="pay-name"
+                  onFocus={() => setFocus('name')}
+                  onBlur={() => setFocus(null)}
                   autoComplete="cc-name"
                   value={name}
                   onChange={(e) => {
@@ -373,6 +397,8 @@ export function PaymentGateway({
                   <label htmlFor="pay-exp">Expiry</label>
                   <input
                     id="pay-exp"
+                    onFocus={() => setFocus('expiry')}
+                    onBlur={() => setFocus(null)}
                     inputMode="numeric"
                     autoComplete="cc-exp"
                     value={expiry}

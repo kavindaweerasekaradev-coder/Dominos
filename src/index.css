@@ -5711,6 +5711,119 @@ button.info-card:hover {
   text-transform: uppercase;
   color: rgb(255 255 255 / 70%);
 }
+/* ---- Card animation ---- */
+/* Entrance, then a gentle float. */
+.pay-card-float {
+  animation:
+    card-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    card-float 5s ease-in-out 0.9s infinite;
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translateY(28px) rotateX(28deg) scale(0.92);
+  }
+}
+@keyframes card-float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+/* Follows the mouse with a small 3D tilt. */
+.pay-card-tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+/* A light sweep across the front every few seconds. */
+.pay-card__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 22%) 48%, rgb(255 255 255 / 6%) 52%, transparent 62%);
+  transform: translateX(-120%);
+  animation: card-shine 5.5s ease-in-out 1.2s infinite;
+}
+@keyframes card-shine {
+  0% {
+    transform: translateX(-120%);
+  }
+  30%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+/* The brand pops in when it's recognised. */
+.pay-card__brand {
+  animation: brand-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes brand-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.7);
+  }
+}
+/* Highlight the part of the card being filled in. */
+.pay-card__number,
+.pay-card__holder,
+.pay-card__expiry {
+  position: relative;
+}
+.pay-card__number::after,
+.pay-card__holder::after,
+.pay-card__expiry::after {
+  content: '';
+  position: absolute;
+  inset: -6px -10px;
+  border-radius: 10px;
+  border: 1.5px solid rgb(255 255 255 / 55%);
+  background: rgb(255 255 255 / 6%);
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+  pointer-events: none;
+}
+.pay-card__bottom span.pay-card__holder {
+  flex: 1;
+}
+.pay-card__bottom span.pay-card__expiry {
+  flex-shrink: 0;
+}
+.pay-card__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Padding gives the highlight room while long names still end in "…". */
+.pay-card__bottom span.pay-card__holder,
+.pay-card__bottom span.pay-card__expiry {
+  margin: -5px -8px;
+  padding: 5px 8px;
+}
+.pay-card__holder::after,
+.pay-card__expiry::after {
+  inset: 0;
+}
+.is-focus-number .pay-card__number::after,
+.is-focus-name .pay-card__holder::after,
+.is-focus-expiry .pay-card__expiry::after {
+  opacity: 1;
+  transform: scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pay-card-float,
+  .pay-card__shine,
+  .pay-card__brand {
+    animation: none;
+  }
+  .pay-card-tilt,
+  .pay-card__face {
+    transition: none;
+  }
+}
 .pay-input {
   position: relative;
 }
