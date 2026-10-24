@@ -5365,3 +5365,403 @@ button.info-card:hover {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* ---------- Payment screen ---------- */
+.pay-dialog {
+  width: min(480px, 100%);
+}
+.pay-dialog .dialog__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  color: #fff;
+  background:
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    linear-gradient(135deg, var(--brand), var(--navy));
+}
+.pay-head > div {
+  display: flex;
+  flex-direction: column;
+}
+.pay-head__label,
+.pay-head__ref {
+  font-size: 12px;
+  color: rgb(255 255 255 / 75%);
+}
+.pay-head__amount {
+  font-family: var(--display);
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.pay-head__lock {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 14%);
+}
+.pay-form {
+  display: grid;
+  gap: 14px;
+}
+.pay-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--bg-2);
+}
+.pay-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-2);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.pay-tab[aria-checked='true'] {
+  background: #fff;
+  color: var(--brand);
+  box-shadow: var(--shadow-sm);
+}
+/* Live card preview that flips to show the back while typing the security code. */
+.pay-card {
+  position: relative;
+  width: min(100%, 320px);
+  aspect-ratio: 1.586;
+  margin: 2px auto 4px;
+  perspective: 1000px;
+}
+.pay-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-radius: 18px;
+  color: #fff;
+  backface-visibility: hidden;
+  background:
+    radial-gradient(circle at 85% 15%, rgb(255 255 255 / 18%), transparent 45%),
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    linear-gradient(135deg, var(--navy), var(--brand) 70%, #0a7bb0);
+  box-shadow: 0 18px 36px rgb(0 37 55 / 28%);
+  transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.pay-card__back {
+  justify-content: flex-start;
+  padding: 22px 0 0;
+  transform: rotateY(180deg);
+}
+.pay-card.is-flipped .pay-card__front {
+  transform: rotateY(-180deg);
+}
+.pay-card.is-flipped .pay-card__back {
+  transform: rotateY(0);
+}
+.pay-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pay-card__chip {
+  width: 40px;
+  height: 30px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #e9eef1, #b9c6ce);
+}
+.pay-card__brand {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+.pay-card__number {
+  font-family: var(--display);
+  font-size: clamp(17px, 5vw, 21px);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.pay-card__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.pay-card__bottom span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pay-card__bottom small {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 70%);
+}
+.pay-card__stripe {
+  height: 40px;
+  background: #0d1a22;
+}
+.pay-card__cvv {
+  align-self: flex-end;
+  margin: 18px 20px 0 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+.pay-input {
+  position: relative;
+}
+.pay-input input {
+  padding-right: 110px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.pay-input__brand {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  display: flex;
+  font-size: 12px;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--brand);
+}
+.pay-row {
+  grid-template-columns: 1fr 1fr;
+}
+.pay-demo {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pay-wallets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pay-wallet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: 16px;
+  border: 1.5px solid var(--line);
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.pay-wallet[aria-checked='true'] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.pay-wallet__mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+.pay-wallet[aria-checked='true'] .pay-wallet__mark {
+  background: var(--brand);
+}
+.pay-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.pay-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--brand);
+}
+.pay-qr {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1.5px dashed var(--line-2);
+}
+.pay-qr__frame {
+  position: relative;
+  flex-shrink: 0;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.pay-qr__code {
+  display: block;
+  width: 136px;
+  height: 136px;
+  fill: var(--ink);
+}
+.pay-qr__logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 0 0 4px #fff;
+}
+.pay-submit {
+  margin-top: 4px;
+}
+.pay-back {
+  justify-self: center;
+  color: var(--muted);
+}
+.pay-otp {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.pay-otp__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 800;
+}
+.pay-otp h3 {
+  font-size: 20px;
+}
+.pay-otp .muted {
+  max-width: 340px;
+  font-size: 14px;
+}
+.pay-otp__input {
+  width: 220px;
+  height: 56px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line-2);
+  text-align: center;
+  font-family: var(--display);
+  font-size: 26px;
+  letter-spacing: 0.4em;
+  outline: none;
+}
+.pay-otp__input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+.pay-result {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 32px 8px;
+  text-align: center;
+}
+.pay-result h3 {
+  font-size: 20px;
+}
+.pay-result__icon,
+.pay-result__spin {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+}
+.pay-result__icon {
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 0 0 10px var(--brand-soft);
+  animation: pay-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.pay-result__spin {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.pay-result__spin svg {
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes pay-pop {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+.pay-foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pay-foot svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--brand);
+}
+@media (max-width: 420px) {
+  .pay-tab {
+    flex-direction: column;
+    gap: 2px;
+    min-height: 52px;
+    font-size: 12px;
+  }
+  .pay-qr {
+    flex-direction: column;
+    text-align: center;
+  }
+}

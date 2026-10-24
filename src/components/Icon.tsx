@@ -11,7 +11,9 @@ import {
   Flame,
   Info,
   Leaf,
+  LoaderCircle,
   LocateFixed,
+  Lock,
   MapPin,
   Minus,
   Motorbike,
@@ -19,6 +21,7 @@ import {
   Pencil,
   Phone,
   Pizza,
+  QrCode,
   Play,
   Plus,
   Receipt,
@@ -26,6 +29,7 @@ import {
   Search,
   ShieldCheck,
   ShoppingBag,
+  Smartphone,
   Sparkle,
   Store,
   Tag,
@@ -72,6 +76,10 @@ const ICONS = {
   pause: Pause,
   play: Play,
   cash: Banknote,
+  lock: Lock,
+  mobile: Smartphone,
+  qr: QrCode,
+  loader: LoaderCircle,
 } satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof ICONS

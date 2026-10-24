@@ -8,12 +8,15 @@ import { useUi } from '../state/ui'
 import { CartLines, DealBox, EtaLine, TotalsTable } from './CartParts'
 import { Icon, type IconName } from './Icon'
 import { FulfilmentToggle } from './LocationDialog'
+import { PaymentGateway } from './PaymentGateway'
+
+const newOrderId = () => `DLK-${Math.floor(10000 + Math.random() * 89999)}`
 
 type Errors = Partial<Record<'location' | 'address' | 'name' | 'phone' | 'email', string>>
 
 export function Checkout() {
   const { state, totals, dispatch } = useStore()
-  const { setLocationOpen, setCartOpen } = useUi()
+  const { setLocationOpen, setCartOpen, showToast } = useUi()
   const store = state.location ? STORE_BY_ID[state.location.storeId] : null
   // Address lives with the saved location so the picker and this form never disagree.
   const address = state.location?.address ?? ''
@@ -29,7 +32,8 @@ export function Checkout() {
   const clearError = (k: keyof Errors) => errors[k] && setErrors((e) => ({ ...e, [k]: undefined }))
   // The address can also be filled in from the location picker, so hide its error once it's valid.
   const addressError = address.trim().length < 5 ? errors.address : undefined
-  const [paying, setPaying] = useState(false)
+  // Online payments open the payment screen first; the order is placed once it succeeds.
+  const [gateway, setGateway] = useState<{ id: string; phone: string } | null>(null)
   const [slots] = useState(() => {
     const out: string[] = []
     const t = new Date()
@@ -87,31 +91,31 @@ export function Checkout() {
       requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus())
       return
     }
-    const place = () => {
-      const [a, b] = delivery ? store!.deliveryMins : store!.pickupMins
-      const id = `DLK-${Math.floor(10000 + Math.random() * 89999)}`
-      dispatch({
-        type: 'placeOrder',
-        order: {
-          id,
-          placedAt: Date.now(),
-          etaMins: [a, b],
-          fulfilment: state.fulfilment,
-          location: delivery ? { storeId: store!.id, address: address.trim(), landmark: landmark.trim() } : { storeId: store!.id },
-          items: state.cart,
-          totals,
-          payment,
-          contact: { name: name.trim(), phone: digits!, email: email.trim() },
-        },
-      })
-      navigate(`/order/${id}`)
-    }
+    const id = newOrderId()
     if (payment === 'online') {
-      setPaying(true)
-      window.setTimeout(place, 1600)
-    } else {
-      place()
+      setGateway({ id, phone: digits! })
+      return
     }
+    placeOrder(id, digits!)
+  }
+
+  const placeOrder = (id: string, digits: string) => {
+    const [a, b] = delivery ? store!.deliveryMins : store!.pickupMins
+    dispatch({
+      type: 'placeOrder',
+      order: {
+        id,
+        placedAt: Date.now(),
+        etaMins: [a, b],
+        fulfilment: state.fulfilment,
+        location: delivery ? { storeId: store!.id, address: address.trim(), landmark: landmark.trim() } : { storeId: store!.id },
+        items: state.cart,
+        totals,
+        payment,
+        contact: { name: name.trim(), phone: digits, email: email.trim() },
+      },
+    })
+    navigate(`/order/${id}`)
   }
 
   return (
@@ -344,8 +348,8 @@ export function Checkout() {
                 </div>
               </div>
             )}
-            <button type="submit" className="btn btn--hot btn--lg btn--split place-bar__btn" disabled={belowMin || paying}>
-              <span>{paying ? 'Confirming payment…' : payment === 'online' ? 'Pay & place order' : 'Place order'}</span>
+            <button type="submit" className="btn btn--hot btn--lg btn--split place-bar__btn" disabled={belowMin}>
+              <span>{payment === 'online' ? 'Continue to payment' : 'Place order'}</span>
               <span>{lkr(totals.total)}</span>
             </button>
             <p className="fine-print center">Prices include all taxes. You’ll get live tracking as soon as you place the order.</p>
@@ -364,6 +368,21 @@ export function Checkout() {
           <TotalsTable totals={totals} />
         </aside>
       </div>
+
+      {/* Mounted only while open so every visit starts fresh with this order’s details. */}
+      {gateway && (
+        <PaymentGateway
+          open
+          amount={totals.total}
+          orderRef={gateway.id}
+          phone={gateway.phone}
+          onPaid={() => placeOrder(gateway.id, gateway.phone)}
+          onCancel={() => {
+            setGateway(null)
+            showToast({ text: 'Payment cancelled. You haven’t been charged and your cart is saved.' })
+          }}
+        />
+      )}
     </main>
   )
 }
