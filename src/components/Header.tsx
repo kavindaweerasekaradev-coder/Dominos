@@ -76,8 +76,13 @@ export function Header({ compact = false }: { compact?: boolean }) {
               aria-label={`Cart, ${totals.itemCount} item${totals.itemCount === 1 ? '' : 's'}`}
             >
               <span className="cart-btn__icon">
-                <Icon name="bag" />
-                {totals.itemCount > 0 && <span className="cart-btn__badge">{totals.itemCount}</span>}
+                <Icon name="bag" size={18} />
+                {/* Keyed by count so the badge pops each time something is added. */}
+                {totals.itemCount > 0 && (
+                  <span key={totals.itemCount} className="cart-btn__badge">
+                    {totals.itemCount}
+                  </span>
+                )}
               </span>
               <span className="cart-btn__total hide-sm">{totals.itemCount ? lkr(totals.total) : 'Cart'}</span>
             </button>

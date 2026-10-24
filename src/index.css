@@ -527,40 +527,69 @@ main:focus {
   align-items: center;
   gap: 6px;
 }
+/* Cart: a blue pill with the bag in a white chip, a red count badge and the running total. */
 .cart-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 46px;
-  padding: 0 16px 0 12px;
+  min-height: 48px;
+  padding: 5px 18px 5px 5px;
   border-radius: 999px;
   background: var(--brand);
   color: #fff;
   font-weight: 700;
+  box-shadow: 0 6px 16px rgb(0 100 145 / 25%);
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    translate 0.2s;
 }
 .cart-btn:hover {
   background: var(--brand-strong);
+  box-shadow: 0 10px 22px rgb(0 100 145 / 32%);
+  translate: 0 -1px;
+}
+/* A tighter focus ring than the default, so it doesn't swamp the pill. */
+.cart-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
 }
 .cart-btn__icon {
   position: relative;
   display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand);
 }
 .cart-btn__badge {
   position: absolute;
-  top: -6px;
-  right: -8px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
+  top: -4px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
   border-radius: 999px;
+  border: 2px solid #fff;
   background: var(--red);
   color: #fff;
   font-size: 11px;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--ink);
+  font-weight: 800;
+  line-height: 1;
+  animation: badge-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes badge-pop {
+  from {
+    scale: 0.4;
+  }
 }
 .cart-btn__total {
+  font-size: 15px;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 .site-header__loc-mobile {
@@ -581,7 +610,7 @@ main:focus {
   }
   .cart-btn {
     padding: 0;
-    width: 46px;
+    width: 48px;
     justify-content: center;
   }
   .site-header__loc-mobile {
