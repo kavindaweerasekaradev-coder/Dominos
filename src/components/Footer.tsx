@@ -171,6 +171,8 @@ export function Footer({ route }: { route: Route }) {
       {route.name !== 'checkout' && (
         <div className="container">
           <section className="footer-cta" aria-labelledby="footer-cta-title">
+            <span className="footer-cta__pattern" aria-hidden="true" />
+            <span className="footer-cta__glint" aria-hidden="true" />
             <div className="footer-cta__copy">
               <p className="footer-cta__kicker">
                 <Icon name="flame" size={15} /> Hungry?
@@ -189,7 +191,6 @@ export function Footer({ route }: { route: Route }) {
               </div>
             </div>
             <div className="footer-cta__visual" aria-hidden="true">
-              <span className="footer-cta__orbit" />
               <div className="footer-cta__pizza">
                 <FoodPhoto photo={PRODUCT_BY_ID['pepperoni-classic'].photo} width={560} />
               </div>

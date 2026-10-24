@@ -3203,11 +3203,48 @@ button.info-card:hover .info-card__action svg {
   padding: 48px 64px 48px 56px;
   border-radius: 32px;
   color: #fff;
+  background: linear-gradient(120deg, var(--red) 0%, var(--red-strong) 60%, var(--red-deep) 100%);
+  box-shadow: 0 30px 60px rgb(227 24 55 / 26%);
+}
+/* The domino pattern drifts slowly, and a soft light sweeps across it every few seconds. */
+.footer-cta__pattern,
+.footer-cta__glint {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--domino-pattern-light) 0 0 / 120px 120px;
+  animation: cta-drift 18s linear infinite;
+}
+.footer-cta__glint {
+  /* The same tiles, stacked brighter, only visible inside a moving band of light. */
   background:
     var(--domino-pattern-light) 0 0 / 120px 120px,
-    radial-gradient(circle at 82% 50%, rgb(255 255 255 / 12%), transparent 38%),
-    linear-gradient(120deg, var(--red) 0%, var(--red-strong) 60%, var(--red-deep) 100%);
-  box-shadow: 0 30px 60px rgb(227 24 55 / 26%);
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    linear-gradient(rgb(255 255 255 / 9%), rgb(255 255 255 / 9%));
+  mask-image: linear-gradient(105deg, transparent 40%, #000 50%, transparent 60%);
+  mask-size: 300% 100%;
+  mask-repeat: no-repeat;
+  animation:
+    cta-drift 18s linear infinite,
+    cta-glint 7s ease-in-out infinite;
+}
+@keyframes cta-drift {
+  to {
+    background-position: 120px -120px;
+  }
+}
+@keyframes cta-glint {
+  0% {
+    mask-position: 100% 0;
+  }
+  70%,
+  100% {
+    mask-position: 0 0;
+  }
 }
 /* A fine inner border for a finished edge. */
 .footer-cta::after {
@@ -3267,22 +3304,29 @@ button.info-card:hover .info-card__action svg {
   width: 300px;
   height: 300px;
 }
-.footer-cta__orbit {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  border: 1.5px dashed rgb(255 255 255 / 38%);
-}
+/* A big pizza on the right whose edges melt into the red, so it feels part of the card. */
 .footer-cta__pizza {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  z-index: -1;
+  left: 60%;
+  top: 50%;
+  width: 580px;
+  aspect-ratio: 1;
+  translate: -50% -50%;
   border-radius: 50%;
   overflow: hidden;
-  border: 8px solid #fff;
-  box-shadow: 0 26px 50px rgb(80 0 15 / 40%);
+  mask-image: radial-gradient(closest-side, #000 38%, rgb(0 0 0 / 50%) 66%, transparent 94%);
 }
 .footer-cta__pizza .photo {
   transform: scale(1.12);
+  filter: saturate(1.08) contrast(1.04);
+}
+/* A warm red wash over the photo's outer ring helps it sit in the card's colour. */
+.footer-cta__pizza::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-side, transparent 45%, rgb(200 16 46 / 55%) 100%);
 }
 .footer-cta__chip {
   position: absolute;
@@ -3319,6 +3363,28 @@ button.info-card:hover .info-card__action svg {
   width: 64px;
   rotate: 14deg;
   filter: drop-shadow(0 12px 18px rgb(80 0 15 / 30%));
+  animation: cta-bob 4.5s ease-in-out infinite;
+}
+@keyframes cta-bob {
+  50% {
+    translate: 0 -10px;
+    rotate: 6deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-cta__pattern,
+  .footer-cta__tile {
+    animation: none;
+  }
+  .footer-cta__glint {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .footer-cta__pattern,
+  .footer-cta__glint {
+    display: none;
+  }
 }
 @media (max-width: 1023px) {
   .footer-cta {
@@ -3328,6 +3394,9 @@ button.info-card:hover .info-card__action svg {
   .footer-cta__visual {
     width: 220px;
     height: 220px;
+  }
+  .footer-cta__pizza {
+    width: 440px;
   }
   .footer-cta__tile {
     width: 50px;
@@ -3852,6 +3921,10 @@ button.info-card:hover .info-card__action svg {
   .footer-cta__visual {
     width: 210px;
     height: 210px;
+  }
+  .footer-cta__pizza {
+    left: 50%;
+    width: 320px;
   }
   .footer-cta__chip {
     left: -44px;
