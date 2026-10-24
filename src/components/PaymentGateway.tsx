@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { formatPhone, normalisePhone } from '../lib/phone'
 import { lkr } from '../lib/pricing'
 import { Dialog } from './Dialog'
+import { DominoMark } from './Domino'
 import { Icon, type IconName } from './Icon'
 
 /*
@@ -194,14 +195,28 @@ export function PaymentGateway({
   return (
     <Dialog open={open} onClose={() => !busy && onCancel()} title="Secure payment" className="pay-dialog">
       <div className="pay-head">
-        <div>
-          <span className="pay-head__label">Paying Domino’s Sri Lanka</span>
-          <strong className="pay-head__amount">{lkr(amount)}</strong>
-          <span className="pay-head__ref">Order ref {orderRef}</span>
+        <div className="pay-head__top">
+          <span className="pay-head__merchant">
+            <span className="pay-head__mark">
+              <DominoMark size={24} />
+            </span>
+            <span>
+              <strong>Domino’s Sri Lanka</strong>
+              <small>Order {orderRef}</small>
+            </span>
+          </span>
+          <span className="pay-head__secure">
+            <Icon name="lock" size={13} /> Secure
+          </span>
         </div>
-        <span className="pay-head__lock">
-          <Icon name="lock" size={20} />
-        </span>
+        <div className="pay-head__bottom">
+          <span className="pay-head__label">Amount to pay</span>
+          <strong className="pay-head__amount">
+            <small>Rs</small>
+            {lkr(amount).replace('Rs ', '')}
+          </strong>
+          <span className="pay-head__note">Includes all taxes</span>
+        </div>
       </div>
 
       {stage === 'success' ? (

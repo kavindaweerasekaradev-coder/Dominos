@@ -5379,40 +5379,117 @@ button.info-card:hover {
   align-items: center;
   gap: 8px;
 }
+/* Amount summary: merchant and secure badge on top, the amount below a fine dashed rule. */
 .pay-head {
+  position: relative;
+  /* Keep full height inside the scrolling dialog body (overflow: hidden would otherwise let it shrink). */
+  flex-shrink: 0;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  gap: 16px;
+  padding: 18px 20px 20px;
+  border-radius: 20px;
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgb(255 255 255 / 14%) 0%, transparent 45%), linear-gradient(140deg, #0a6a99 0%, var(--brand) 35%, var(--navy) 100%);
+  box-shadow: 0 14px 30px rgb(0 37 55 / 22%);
+}
+/* A fine inner border for a finished edge. */
+.pay-head::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+.pay-head__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 18px;
-  border-radius: 18px;
-  color: #fff;
-  background:
-    var(--domino-pattern-light) 0 0 / 120px 120px,
-    linear-gradient(135deg, var(--brand), var(--navy));
+  padding-bottom: 16px;
+  border-bottom: 1px dashed rgb(255 255 255 / 22%);
 }
-.pay-head > div {
+.pay-head__merchant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.pay-head__merchant > span:last-child {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
-.pay-head__label,
-.pay-head__ref {
+.pay-head__merchant strong {
+  font-size: 14px;
+  line-height: 1.25;
+}
+.pay-head__merchant small {
   font-size: 12px;
-  color: rgb(255 255 255 / 75%);
+  color: rgb(255 255 255 / 68%);
+  font-variant-numeric: tabular-nums;
 }
-.pay-head__amount {
-  font-family: var(--display);
-  font-size: 30px;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-.pay-head__lock {
+.pay-head__mark {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: rgb(255 255 255 / 14%);
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgb(0 20 30 / 20%);
+}
+.pay-head__secure {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pay-head__bottom {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  column-gap: 12px;
+}
+.pay-head__label {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 68%);
+}
+.pay-head__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+  font-family: var(--display);
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.pay-head__amount small {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: rgb(255 255 255 / 75%);
+}
+.pay-head__note {
+  padding-bottom: 4px;
+  font-size: 12px;
+  color: rgb(255 255 255 / 68%);
+  white-space: nowrap;
 }
 .pay-form {
   display: grid;
