@@ -3154,6 +3154,16 @@ button.info-card:hover .info-card__action svg {
   border-radius: 40px 40px 0 0;
   overflow: hidden;
 }
+/* On the dark footer the focus ring is white so keyboard users can always see where they are. */
+.site-footer :focus-visible {
+  outline-color: #fff;
+}
+/* Windows high-contrast mode: drop the decorative pattern so only the content remains. */
+@media (forced-colors: active) {
+  .footer-main::before {
+    display: none;
+  }
+}
 /* Hand-drawn ingredient doodles, like the walls in Domino's stores. Kept soft so the text stays clear,
    and faded towards the middle where the links sit. */
 .footer-main::before {
@@ -3305,8 +3315,14 @@ button.info-card:hover .info-card__action svg {
   color: #fff;
   translate: 4px 0;
 }
+.footer-col li > button:focus-visible,
+.footer-col li > a:focus-visible {
+  color: #fff;
+}
 .footer-col li > button:hover svg,
-.footer-col li > a:hover svg {
+.footer-col li > a:hover svg,
+.footer-col li > button:focus-visible svg,
+.footer-col li > a:focus-visible svg {
   opacity: 1;
   translate: 0 0;
 }
@@ -3341,7 +3357,7 @@ button.info-card:hover .info-card__action svg {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 60%);
+  color: rgb(255 255 255 / 82%);
 }
 .footer-hotline strong {
   font-family: var(--display);
@@ -3354,7 +3370,7 @@ button.info-card:hover .info-card__action svg {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 55%);
+  color: rgb(255 255 255 / 80%);
 }
 .footer-pay {
   display: flex !important;
@@ -3412,10 +3428,16 @@ button.info-card:hover .info-card__action svg {
   padding-block: 20px 28px;
   border-top: 1px solid rgb(255 255 255 / 12%);
   font-size: 13px;
-  color: rgb(255 255 255 / 55%);
+  color: #fff;
+  /* A soft navy halo keeps the small print readable over the doodles without hiding them. */
+  text-shadow:
+    0 0 3px var(--navy),
+    0 0 8px var(--navy),
+    0 0 14px var(--navy);
 }
 .footer-bottom a {
-  color: rgb(255 255 255 / 80%);
+  color: #fff;
+  text-underline-offset: 3px;
 }
 .footer-top {
   display: inline-flex;

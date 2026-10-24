@@ -29,7 +29,11 @@ export function Footer({ route }: { route: Route }) {
     else navigate('/')
   }
   const pickCategory = (c: CategoryId) => (onHome ? showMenuCategory(c) : navigate('/'))
-  const toTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia(MOTION_OK).matches ? 'smooth' : 'auto' })
+  // Scroll up and move keyboard focus to the top too, so the next Tab doesn't jump back down here.
+  const toTop = () => {
+    window.scrollTo({ top: 0, behavior: window.matchMedia(MOTION_OK).matches ? 'smooth' : 'auto' })
+    document.querySelector<HTMLElement>('.site-header a, .site-header button')?.focus({ preventScroll: true })
+  }
 
   useGSAP(
     () => {
@@ -104,7 +108,7 @@ export function Footer({ route }: { route: Route }) {
                 <button type="button" className="btn btn--white btn--lg" onClick={() => goTo('menu')}>
                   Order now <Icon name="chevronRight" size={18} className="btn__arrow" />
                 </button>
-                <a className="btn btn--glass btn--lg" href={TEL}>
+                <a className="btn btn--glass btn--lg" href={TEL} aria-label={`Call Domino’s on ${HOTLINE}`}>
                   <Icon name="phone" size={18} /> {HOTLINE}
                 </a>
               </div>
@@ -129,7 +133,7 @@ export function Footer({ route }: { route: Route }) {
 
       <div className="footer-main">
         <div className="container">
-          <ul className="footer-perks">
+          <ul className="footer-perks" aria-label="Good to know">
             {good.map((g) => (
               <li key={g.text}>
                 <span className="footer-perks__icon">
@@ -201,7 +205,7 @@ export function Footer({ route }: { route: Route }) {
 
           <div className="footer-col footer-contact">
             <h2>Get in touch</h2>
-            <a className="footer-hotline" href={TEL}>
+            <a className="footer-hotline" href={TEL} aria-label={`Call the Domino’s hotline, ${HOTLINE}`}>
               <span className="footer-hotline__icon">
                 <Icon name="phone" size={20} />
               </span>
@@ -238,7 +242,7 @@ export function Footer({ route }: { route: Route }) {
           <p>
             © {YEAR} Design concept for a redesigned ordering experience. Not affiliated with or endorsed by Domino’s Pizza. Food photos from{' '}
             <a href="https://unsplash.com" target="_blank" rel="noreferrer">
-              Unsplash
+              Unsplash<span className="sr-only"> (opens in a new tab)</span>
             </a>
             .
           </p>
