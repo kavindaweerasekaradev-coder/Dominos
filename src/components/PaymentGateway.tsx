@@ -294,8 +294,20 @@ export function PaymentGateway({
             <>
               <div className={`pay-card ${flipped ? 'is-flipped' : ''}`} aria-hidden="true">
                 <div className="pay-card__face pay-card__front">
+                  <svg className="pay-card__waves" viewBox="0 0 320 200" preserveAspectRatio="none">
+                    {Array.from({ length: 9 }, (_, i) => (
+                      <path key={i} d={`M-20 ${150 - i * 14} C 80 ${60 - i * 10}, 190 ${230 - i * 16}, 340 ${70 - i * 8}`} />
+                    ))}
+                  </svg>
                   <div className="pay-card__top">
-                    <span className="pay-card__chip" />
+                    <span className="pay-card__chip-row">
+                      <span className="pay-card__chip">
+                        <i />
+                      </span>
+                      <svg className="pay-card__nfc" viewBox="0 0 24 24">
+                        <path d="M8.5 8a5.5 5.5 0 0 1 0 8 M12 5.5a9 9 0 0 1 0 13 M15.5 3a12.5 12.5 0 0 1 0 18" />
+                      </svg>
+                    </span>
                     <span className="pay-card__brand">{brand ? BRAND_LABEL[brand] : ''}</span>
                   </div>
                   <span className="pay-card__number">{num ? groupCard(num, brand) : '•••• •••• •••• ••••'}</span>
@@ -305,14 +317,18 @@ export function PaymentGateway({
                       {name.trim() || 'YOUR NAME'}
                     </span>
                     <span>
-                      <small>Expires</small>
+                      <small>Valid thru</small>
                       {expiry || 'MM/YY'}
                     </span>
                   </div>
                 </div>
                 <div className="pay-card__face pay-card__back">
                   <span className="pay-card__stripe" />
-                  <span className="pay-card__cvv">{cvv.replace(/./g, '•') || '•••'}</span>
+                  <div className="pay-card__sign">
+                    <span />
+                    <b>{cvv.replace(/./g, '•') || '•••'}</b>
+                  </div>
+                  <span className="pay-card__back-note">Security code</span>
                 </div>
               </div>
 
