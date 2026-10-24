@@ -6272,43 +6272,42 @@ button.info-card:hover .info-card__action svg {
   border: 1px solid rgb(255 255 255 / 16%);
   pointer-events: none;
 }
-/* Soft spotlight behind the pizza. */
-.ad__glow {
-  position: absolute;
-  z-index: -1;
-  right: -18cqw;
-  top: 4cqw;
-  width: 80cqw;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgb(255 255 255 / 30%) 0%, rgb(255 255 255 / 8%) 40%, transparent 68%);
-}
+/* The pizza fills the right side and dissolves into the banner's colour. */
 .ad__photo {
   position: absolute;
-  right: -11cqw;
-  top: 13cqw;
-  width: 58cqw;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  padding: 1.3cqw;
-  background: #fff;
-  box-shadow:
-    0 0 0 1.6cqw rgb(255 255 255 / 14%),
-    0 5cqw 9cqw rgb(0 0 0 / 35%);
+  inset: 0 0 0 38%;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, #000 34%), linear-gradient(0deg, transparent 0%, #000 22%), linear-gradient(180deg, transparent 0%, #000 16%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 34%), linear-gradient(0deg, transparent 0%, #000 22%), linear-gradient(180deg, transparent 0%, #000 16%);
+  mask-composite: intersect;
 }
-.ad__photo-spin {
+/* A light wash of the banner colour ties the photo to the background. */
+.ad__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 58 87 / 55%) 0%, transparent 45%), radial-gradient(circle at 62% 46%, transparent 32%, rgb(0 58 87 / 60%) 90%);
+  mix-blend-mode: multiply;
+}
+.ad--red .ad__photo::after {
+  background: linear-gradient(90deg, rgb(140 11 32 / 50%) 0%, transparent 45%), radial-gradient(circle at 62% 46%, transparent 32%, rgb(140 11 32 / 55%) 90%);
+}
+.ad__photo-zoom {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  border-radius: 50%;
-  animation: ad-spin 70s linear infinite;
+  animation: ad-zoom 14s ease-in-out infinite alternate;
 }
-.ad__photo-spin .photo {
-  transform: scale(1.1);
+.ad__photo-zoom .photo {
+  filter: saturate(1.15) contrast(1.05);
 }
-@keyframes ad-spin {
+@keyframes ad-zoom {
+  from {
+    transform: scale(1.04);
+  }
   to {
-    rotate: 360deg;
+    transform: scale(1.16) translateX(-2%);
   }
 }
 .ad__top {
@@ -6447,6 +6446,9 @@ button.info-card:hover .info-card__action svg {
 }
 .ad__terms {
   max-width: 46cqw;
+  text-shadow:
+    0 1px 3px rgb(0 0 0 / 55%),
+    0 0 12px rgb(0 0 0 / 35%);
   margin-top: 2cqw;
   font-size: max(12px, 2.6cqw);
   font-weight: 600;
@@ -6512,8 +6514,6 @@ button.info-card:hover .info-card__action svg {
     font-size: 11cqw;
   }
   .ad__photo {
-    right: -18cqw;
-    top: 22cqw;
-    width: 64cqw;
+    inset: 18% 0 0 34%;
   }
 }

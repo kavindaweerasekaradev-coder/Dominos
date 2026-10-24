@@ -56,9 +56,8 @@ export function AdPosters({ onPickPizzas }: { onPickPizzas: () => void }) {
       <div className="ads__track">
         {ADS.map((ad) => (
           <article key={ad.id} className={`ad ad--${ad.tone}`} aria-labelledby={`ad-${ad.id}`}>
-            <span className="ad__glow" aria-hidden="true" />
             <div className="ad__photo" aria-hidden="true">
-              <div className="ad__photo-spin">
+              <div className="ad__photo-zoom">
                 <FoodPhoto photo={PRODUCT_BY_ID[ad.photo].photo} width={640} />
               </div>
             </div>
