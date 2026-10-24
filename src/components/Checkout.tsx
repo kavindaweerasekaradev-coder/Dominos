@@ -123,11 +123,24 @@ export function Checkout() {
       <div className="checkout__head">
         <h1>Checkout</h1>
         <ol className="steps" aria-label="Checkout steps">
-          <li className="is-done">Cart</li>
+          <li className="is-done">
+            <span className="steps__dot" aria-hidden="true">
+              <Icon name="check" size={14} />
+            </span>
+            Cart<span className="sr-only"> (done)</span>
+          </li>
           <li className="is-on" aria-current="step">
+            <span className="steps__dot" aria-hidden="true">
+              2
+            </span>
             Details & payment
           </li>
-          <li>Track</li>
+          <li>
+            <span className="steps__dot" aria-hidden="true">
+              3
+            </span>
+            Track
+          </li>
         </ol>
       </div>
 

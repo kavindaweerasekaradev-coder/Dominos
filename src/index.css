@@ -5181,11 +5181,16 @@ button.info-card:hover .info-card__action svg {
 .checkout__head h1 {
   font-size: 34px;
 }
+/* Checkout progress: three steps joined by lines that fill blue as you go. */
 .steps {
   display: flex;
-  gap: 8px;
-  counter-reset: step;
-  font-size: 13px;
+  align-items: center;
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--muted);
 }
@@ -5193,36 +5198,66 @@ button.info-card:hover .info-card__action svg {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
-.steps li::before {
-  counter-increment: step;
-  content: counter(step);
+/* The joining line, blue up to the current step. */
+.steps li + li::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  margin: 0 6px 0 4px;
+  border-radius: 999px;
+  background: var(--line-2);
+}
+.steps li.is-done + li::before {
+  background: var(--brand);
+}
+.steps__dot {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 99px;
-  background: var(--bg-2);
-  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-2);
+  background: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
 }
-.steps li + li::after {
-  content: none;
+.steps .is-done {
+  color: var(--ink-2);
 }
-.steps li + li {
-  padding-left: 8px;
-  border-left: 1px solid var(--line-2);
-}
-.steps .is-done::before {
-  content: '✓';
-  background: var(--brand-soft);
-  color: var(--brand);
+.steps .is-done .steps__dot {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
 }
 .steps .is-on {
   color: var(--ink);
 }
-.steps .is-on::before {
+.steps .is-on .steps__dot {
+  border-color: var(--brand);
   background: var(--brand);
   color: #fff;
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+@media (max-width: 520px) {
+  .steps {
+    padding-right: 12px;
+    font-size: 12.5px;
+  }
+  .steps li + li::before {
+    width: 14px;
+    margin: 0 4px 0 2px;
+  }
+  /* Only the current step keeps its label on small phones. */
+  .steps li:not(.is-on) {
+    font-size: 0;
+    gap: 0;
+  }
+  .steps li:not(.is-on) .steps__dot {
+    font-size: 12px;
+  }
 }
 .checkout__grid {
   display: grid;
