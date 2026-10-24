@@ -1,8 +1,9 @@
-import { useId, useRef, useState } from 'react'
-import { PRODUCT_BY_ID, type PizzaProduct } from '../data/menu'
+import { useId, useRef, useState, type CSSProperties } from 'react'
+import { PRODUCT_BY_ID, SIZES, type PizzaProduct, type SizeId } from '../data/menu'
 import { scrollToSection } from '../lib/dom'
 import { MOTION_OK, gsap, SplitText, useGSAP } from '../lib/gsap'
 import { lkr } from '../lib/pricing'
+import { useUi } from '../state/ui'
 import { useQuickAdd } from '../state/useQuickAdd'
 import { useUntilMidnight } from '../state/useUntilMidnight'
 import { FoodPhoto } from './FoodPhoto'
@@ -10,7 +11,6 @@ import { Icon } from './Icon'
 
 const FEATURED = ['devilled-chicken', 'pepperoni-classic', 'kochchi-paneer', 'margherita'].map((id) => PRODUCT_BY_ID[id] as PizzaProduct)
 const SLIDE_SECONDS = 5
-const RING_LENGTH = 2 * Math.PI * 27
 const TICKER = [
   `2 Medium pizzas for ${lkr(3990)}`,
   `Free delivery over ${lkr(4000)}`,
@@ -25,13 +25,17 @@ export function Hero() {
   const root = useRef<HTMLElement>(null)
   const smokeId = `smoke${useId().replace(/:/g, '')}`
   const quickAdd = useQuickAdd()
+  const { openProduct } = useUi()
   const timeLeft = useUntilMidnight()
   const [index, setIndex] = useState(0)
+  const [size, setSize] = useState<SizeId>('medium')
   // Visitors who ask for reduced motion get no automatic slideshow.
   const [playing, setPlaying] = useState(() => window.matchMedia(MOTION_OK).matches)
-  const prev = useRef(0)
-  const timer = useRef<gsap.core.Tween | null>(null)
+  const [dragX, setDragX] = useState(0)
+  const drag = useRef<{ x: number; moved: boolean } | null>(null)
   const pizza = FEATURED[index]
+  const count = FEATURED.length
+  const go = (n: number) => setIndex(((n % count) + count) % count)
 
   // Intro, ambient motion and scroll effects.
   useGSAP(
@@ -50,32 +54,26 @@ export function Hero() {
           .from(q('.hero__card'), { scale: 0.96, autoAlpha: 0, duration: 0.8 })
           .from(q('.hero__pill'), { y: 16, autoAlpha: 0, duration: 0.6 }, 0.3)
           .from(q('.hero__sub, .hero__deal, .hero__ctas > *, .hero__proof li'), { y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.07 }, 0.7)
-          .from(q('.hero__plate'), { scale: 0.4, rotate: -200, autoAlpha: 0, duration: 1.6, ease: 'expo.out' }, 0.3)
-          .from(q('.hero__orbit, .hero__halo'), { scale: 0.85, autoAlpha: 0, duration: 1.2 }, 0.6)
-          .from(q('.hero__price'), { scale: 0, duration: 0.8, ease: 'back.out(1.8)' }, 1.1)
-          .from(q('.hero__info'), { y: 40, autoAlpha: 0, duration: 0.9 }, 1.15)
-          .from(q('.hero__thumbs > *'), { y: 16, autoAlpha: 0, duration: 0.6, stagger: 0.06 }, 1.3)
+          .from(q('.hero__deck'), { y: 80, rotate: -10, autoAlpha: 0, duration: 1.2, ease: 'expo.out' }, 0.4)
+          .from(q('.hero__stories'), { y: -16, autoAlpha: 0, duration: 0.6 }, 1)
+          .from(q('.hero__panel'), { y: 40, autoAlpha: 0, duration: 0.9 }, 1.1)
           .from(q('.ticker'), { autoAlpha: 0, duration: 0.6 }, 1.3)
 
-        // A red dot circles the plate slowly; the pizza turns even more slowly.
-        gsap.to(q('.hero__orbit'), { rotate: 360, duration: 30, ease: 'none', repeat: -1 })
-        gsap.to(q('.hero__plate-spin'), { rotate: 360, duration: 90, ease: 'none', repeat: -1 })
-        gsap.to(q('.hero__glow'), { scale: 1.12, opacity: 0.8, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 })
         gsap.to(q('.ticker__track'), { xPercent: -50, duration: 32, ease: 'none', repeat: -1 })
 
-        // Scroll: the pizza grows and turns, the copy fades as the hero leaves.
+        // Scroll: the deck tilts away gently and the copy fades as the hero leaves.
         const scrub = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 }
-        gsap.to(q('.hero__plate-scroll'), { rotate: 60, scale: 1.08, ease: 'none', scrollTrigger: scrub })
+        gsap.to(q('.hero__deck'), { y: 40, rotate: -4, ease: 'none', scrollTrigger: scrub })
         gsap.to(q('.hero__copy'), { y: -60, opacity: 0.2, ease: 'none', scrollTrigger: scrub })
 
         if (window.matchMedia('(pointer: fine)').matches) {
-          // The pizza follows the mouse slightly.
+          // The deck follows the mouse slightly.
           const stage = q('.hero__stage')[0]
           const xTo = gsap.quickTo(stage, 'x', { duration: 0.8, ease: 'power3.out' })
           const yTo = gsap.quickTo(stage, 'y', { duration: 0.8, ease: 'power3.out' })
           const onMove = (e: PointerEvent) => {
-            xTo((e.clientX / window.innerWidth - 0.5) * 18)
-            yTo((e.clientY / window.innerHeight - 0.5) * 18)
+            xTo((e.clientX / window.innerWidth - 0.5) * 16)
+            yTo((e.clientY / window.innerHeight - 0.5) * 16)
           }
           window.addEventListener('pointermove', onMove)
           return () => window.removeEventListener('pointermove', onMove)
@@ -85,62 +83,57 @@ export function Hero() {
     { scope: root },
   )
 
-  // Slide change: the old pizza spins away as the new one spins in, and the details swap.
-  useGSAP(
-    () => {
-      const from = prev.current
-      prev.current = index
-      if (from === index) return
-      const q = gsap.utils.selector(root)
-      const slides = q('.hero__slide')
-      if (!window.matchMedia(MOTION_OK).matches) {
-        gsap.set(slides[from], { autoAlpha: 0 })
-        gsap.set(slides[index], { autoAlpha: 1 })
-        return
-      }
-      gsap.to(slides[from], { rotate: 120, scale: 0.7, autoAlpha: 0, duration: 0.7, ease: 'power3.in' })
-      gsap.fromTo(
-        slides[index],
-        { rotate: -140, scale: 1.25, autoAlpha: 0 },
-        { rotate: 0, scale: 1, autoAlpha: 1, duration: 1.1, ease: 'expo.out', delay: 0.2 },
-      )
-      gsap.fromTo(q('.hero__swap'), { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.06, ease: 'power3.out', delay: 0.25 })
-      gsap.fromTo(q('.hero__price'), { scale: 0.7 }, { scale: 1, duration: 0.7, ease: 'back.out(2.2)', delay: 0.3 })
-    },
-    { scope: root, dependencies: [index] },
-  )
-
-  // Autoplay: the active thumbnail's ring fills up, then the next pizza comes in. Hovering the stage pauses it.
+  // Autoplay: the active story bar fills, then the next card comes forward. Hovering or focusing the deck pauses it.
   useGSAP(
     (_, contextSafe) => {
       if (!playing) return
       const q = gsap.utils.selector(root)
-      const ring = q(`.hero__thumb[data-i="${index}"] .hero__thumb-progress`)
-      const tween = gsap.fromTo(
-        ring,
-        { strokeDashoffset: RING_LENGTH },
-        { strokeDashoffset: 0, duration: SLIDE_SECONDS, ease: 'none', onComplete: () => setIndex((i) => (i + 1) % FEATURED.length) },
-      )
-      timer.current = tween
-      const stage = q('.hero__visual')[0]
+      const fill = q(`.hero__story[data-i="${index}"] .hero__story-fill`)
+      const tween = gsap.fromTo(fill, { scaleX: 0 }, { scaleX: 1, duration: SLIDE_SECONDS, ease: 'none', onComplete: () => go(index + 1) })
+      const area = q('.hero__visual')[0]
       const pause = contextSafe!(() => tween.pause())
       const resume = contextSafe!(() => tween.resume())
-      stage.addEventListener('pointerenter', pause)
-      stage.addEventListener('pointerleave', resume)
-      stage.addEventListener('focusin', pause)
-      stage.addEventListener('focusout', resume)
+      area.addEventListener('pointerenter', pause)
+      area.addEventListener('pointerleave', resume)
+      area.addEventListener('focusin', pause)
+      area.addEventListener('focusout', resume)
       return () => {
-        stage.removeEventListener('pointerenter', pause)
-        stage.removeEventListener('pointerleave', resume)
-        stage.removeEventListener('focusin', pause)
-        stage.removeEventListener('focusout', resume)
-        gsap.set(ring, { strokeDashoffset: RING_LENGTH })
+        area.removeEventListener('pointerenter', pause)
+        area.removeEventListener('pointerleave', resume)
+        area.removeEventListener('focusin', pause)
+        area.removeEventListener('focusout', resume)
+        gsap.set(fill, { clearProps: 'transform' })
       }
     },
     { scope: root, dependencies: [index, playing], revertOnUpdate: true },
   )
 
-  const addCurrent = () => quickAdd(pizza.id, { size: 'medium', from: root.current?.querySelectorAll<HTMLElement>('.hero__slide')[index] })
+  // Swipe or drag the front card left or right to change pizza.
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current = { x: e.clientX, moved: false }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current) return
+    const dx = e.clientX - drag.current.x
+    if (Math.abs(dx) > 6) drag.current.moved = true
+    setDragX(dx)
+  }
+  const onPointerUp = () => {
+    if (!drag.current) return
+    if (dragX < -60) go(index + 1)
+    else if (dragX > 60) go(index - 1)
+    else if (!drag.current.moved) openProduct(pizza.id)
+    drag.current = null
+    setDragX(0)
+  }
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') go(index + 1)
+    if (e.key === 'ArrowLeft') go(index - 1)
+  }
+
+  const sizeInfo = SIZES.find((x) => x.id === size)!
+  const addCurrent = () => quickAdd(pizza.id, { size, from: root.current?.querySelector<HTMLElement>('.hero__deck-card.is-front') })
 
   return (
     <section ref={root} className="hero" aria-labelledby="hero-title">
@@ -190,24 +183,32 @@ export function Hero() {
               </ul>
             </div>
 
-            <div className="hero__visual" aria-roledescription="carousel" aria-label="Featured pizzas">
+            <div className="hero__visual" role="region" aria-roledescription="carousel" aria-label="Featured pizzas" onKeyDown={onKeyDown}>
+              <div className="hero__stories">
+                {FEATURED.map((p, i) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    data-i={i}
+                    className={`hero__story ${i < index ? 'is-done' : ''} ${i === index ? 'is-active' : ''}`}
+                    aria-label={`Show ${p.name}`}
+                    aria-current={i === index ? 'true' : undefined}
+                    onClick={() => go(i)}
+                  >
+                    <span className="hero__story-fill" />
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="hero__pause"
+                  onClick={() => setPlaying((v) => !v)}
+                  aria-label={playing ? 'Pause pizza slideshow' : 'Play pizza slideshow'}
+                >
+                  <Icon name={playing ? 'pause' : 'play'} size={13} />
+                </button>
+              </div>
+
               <div className="hero__stage">
-                <span className="hero__halo" aria-hidden="true" />
-                <span className="hero__orbit" aria-hidden="true">
-                  <i />
-                </span>
-                {/* Separate layers so the intro, scroll zoom, slow spin and slide changes never fight over the same transform. */}
-                <div className="hero__plate">
-                  <div className="hero__plate-scroll">
-                    <div className="hero__plate-spin">
-                      {FEATURED.map((p, i) => (
-                        <div key={p.id} className="hero__slide" aria-hidden={i !== index}>
-                          <FoodPhoto photo={p.photo} width={900} alt={`${p.name} pizza`} eager={i === 0} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
                 {/* Steam: soft puffs rise off the pizza; the SVG filter breaks them into wisps. */}
                 <svg className="hero__smoke-defs" aria-hidden="true" focusable="false">
                   <filter id={smokeId} x="-30%" y="-30%" width="160%" height="160%">
@@ -221,52 +222,65 @@ export function Hero() {
                     <span key={i} />
                   ))}
                 </div>
-                <div className="hero__price" aria-hidden="true">
-                  <small>From</small>
-                  <strong className="hero__swap">{lkr(pizza.prices.personal)}</strong>
-                </div>
-              </div>
 
-              <div className="hero__info">
-                <div className="hero__info-text" aria-live="polite">
-                  <span className="hero__info-label">
-                    {pizza.badge ?? 'Featured'} · {index + 1}/{FEATURED.length}
-                  </span>
-                  <strong className="hero__swap hero__info-name">{pizza.name}</strong>
-                  <span className="hero__swap hero__info-price">
-                    Medium <b>{lkr(pizza.prices.medium)}</b>
-                  </span>
-                </div>
-                <button type="button" className="hero__add" onClick={addCurrent} aria-label={`Add Medium ${pizza.name} to cart`}>
-                  <Icon name="plus" size={22} />
-                </button>
-              </div>
-
-              <div className="hero__thumbs" role="tablist" aria-label="Choose a featured pizza">
-                {FEATURED.map((p, i) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="tab"
-                    data-i={i}
-                    aria-selected={i === index}
-                    aria-label={p.name}
-                    className="hero__thumb"
-                    onClick={() => setIndex(i)}
-                  >
-                    <FoodPhoto photo={p.photo} width={56} />
-                    <svg className="hero__thumb-ring" viewBox="0 0 60 60" aria-hidden="true">
-                      <circle className="hero__thumb-progress" cx="30" cy="30" r="27" strokeDasharray={RING_LENGTH} strokeDashoffset={RING_LENGTH} />
-                    </svg>
+                {/* A fanned deck: the front card is the current pizza, the next two peek out behind it. */}
+                <div className="hero__deck">
+                  {FEATURED.map((p, i) => {
+                    const pos = (i - index + count) % count
+                    const front = pos === 0
+                    return (
+                      <div
+                        key={p.id}
+                        className={`hero__deck-card pos-${pos} ${front ? 'is-front' : ''} ${front && dragX ? 'is-dragging' : ''}`}
+                        style={front && dragX ? ({ '--dx': dragX } as CSSProperties) : undefined}
+                        aria-hidden={!front}
+                        {...(front ? { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp } : {})}
+                      >
+                        <FoodPhoto photo={p.photo} width={720} alt={front ? `${p.name} pizza` : ''} eager={i === 0} />
+                        <div className="hero__deck-info">
+                          <span className="hero__deck-badge">
+                            <Icon name="sparkle" size={12} /> {p.badge ?? 'Featured'}
+                          </span>
+                          <strong className="hero__deck-name">{p.name}</strong>
+                          <span className="hero__deck-desc">{p.description}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <button type="button" className="hero__nav hero__nav--prev" onClick={() => go(index - 1)} aria-label="Previous pizza">
+                    <Icon name="chevronLeft" size={20} />
                   </button>
-                ))}
-                <button
-                  type="button"
-                  className="hero__pause"
-                  onClick={() => setPlaying((p) => !p)}
-                  aria-label={playing ? 'Pause pizza slideshow' : 'Play pizza slideshow'}
-                >
-                  <Icon name={playing ? 'pause' : 'play'} size={14} />
+                  <button type="button" className="hero__nav hero__nav--next" onClick={() => go(index + 1)} aria-label="Next pizza">
+                    <Icon name="chevronRight" size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <p className="sr-only" aria-live="polite">
+                {pizza.name}, {index + 1} of {count}
+              </p>
+
+              {/* Order straight from the hero: pick a size and add it. */}
+              <div className="hero__panel">
+                <div className="hero__sizes" role="radiogroup" aria-label={`Size for ${pizza.name}`}>
+                  {SIZES.map((sz) => (
+                    <button key={sz.id} type="button" role="radio" aria-checked={size === sz.id} className="hero__size" onClick={() => setSize(sz.id)}>
+                      <strong>{sz.inches}″</strong>
+                      <span>{sz.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="hero__buy">
+                  <span className="hero__buy-price">
+                    <small>{sizeInfo.serves}</small>
+                    <strong>{lkr(pizza.prices[size])}</strong>
+                  </span>
+                  <button type="button" className="hero__add" onClick={addCurrent} aria-label={`Add ${sizeInfo.label} ${pizza.name} to cart`}>
+                    <Icon name="plus" size={20} /> Add
+                  </button>
+                </div>
+                <button type="button" className="hero__customise" onClick={() => openProduct(pizza.id)}>
+                  Customise crust & toppings <Icon name="chevronRight" size={14} />
                 </button>
               </div>
             </div>
