@@ -20,6 +20,18 @@ const METHODS: { id: Method; label: string; icon: IconName }[] = [
   { id: 'qr', label: 'LankaQR', icon: 'qr' },
 ]
 const WALLETS = ['Genie', 'eZ Cash', 'FriMi']
+// Official logos go in public/wallets/ (see the README there); until a file is added, a lettered badge shows instead.
+const WALLET_LOGO: Record<string, string> = { Genie: 'genie.png', 'eZ Cash': 'ezcash.png', FriMi: 'frimi.png' }
+
+function WalletLogo({ name }: { name: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return <span className="pay-wallet__mark">{name.replace(/\W/g, '').slice(0, 2)}</span>
+  return (
+    <span className="pay-wallet__logo">
+      <img src={`${import.meta.env.BASE_URL}wallets/${WALLET_LOGO[name]}`} alt="" onError={() => setFailed(true)} />
+    </span>
+  )
+}
 const BRAND_LABEL: Record<NonNullable<Brand>, string> = { visa: 'VISA', mastercard: 'Mastercard', amex: 'AMEX' }
 
 const digitsOf = (v: string) => v.replace(/\D/g, '')
@@ -371,7 +383,7 @@ export function PaymentGateway({
               <div className="pay-wallets" role="radiogroup" aria-label="Wallet">
                 {WALLETS.map((w) => (
                   <button key={w} type="button" role="radio" aria-checked={wallet === w} className="pay-wallet" onClick={() => setWallet(w)}>
-                    <span className="pay-wallet__mark">{w.replace(/\W/g, '').slice(0, 2)}</span>
+                    <WalletLogo name={w} />
                     {w}
                   </button>
                 ))}

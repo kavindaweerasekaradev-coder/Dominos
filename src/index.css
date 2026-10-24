@@ -5598,6 +5598,17 @@ button.info-card:hover {
   font-size: 13px;
   font-weight: 800;
 }
+.pay-wallet__logo {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 40px;
+}
+.pay-wallet__logo img {
+  max-width: 88px;
+  max-height: 40px;
+  object-fit: contain;
+}
 .pay-wallet[aria-checked='true'] .pay-wallet__mark {
   background: var(--brand);
 }
