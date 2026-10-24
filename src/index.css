@@ -5370,6 +5370,10 @@ button.info-card:hover {
 .pay-dialog {
   width: min(480px, 100%);
 }
+/* 24px rhythm between every block of the payment screen. */
+.pay-dialog .dialog__body {
+  gap: 24px;
+}
 .pay-dialog .dialog__title {
   display: flex;
   align-items: center;
@@ -5412,7 +5416,7 @@ button.info-card:hover {
 }
 .pay-form {
   display: grid;
-  gap: 14px;
+  gap: 24px;
 }
 .pay-tabs {
   display: grid;
@@ -5447,7 +5451,7 @@ button.info-card:hover {
   position: relative;
   width: min(100%, 320px);
   aspect-ratio: 1.586;
-  margin: 2px auto 4px;
+  margin: 0 auto;
   perspective: 1000px;
 }
 .pay-card__face {
@@ -5559,6 +5563,7 @@ button.info-card:hover {
 }
 .pay-row {
   grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 .pay-demo {
   font-size: 12px;
@@ -5567,7 +5572,7 @@ button.info-card:hover {
 .pay-wallets {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 12px;
 }
 .pay-wallet {
   display: flex;
@@ -5665,7 +5670,7 @@ button.info-card:hover {
   box-shadow: 0 0 0 4px #fff;
 }
 .pay-submit {
-  margin-top: 4px;
+  margin-top: 0;
 }
 .pay-back {
   justify-self: center;
@@ -5674,7 +5679,7 @@ button.info-card:hover {
 .pay-otp {
   display: grid;
   justify-items: center;
-  gap: 10px;
+  gap: 12px;
   text-align: center;
 }
 .pay-otp__badge {
