@@ -825,15 +825,21 @@ main:focus {
     0 0 0 5px rgb(227 24 55 / 25%),
     0 0 18px rgb(227 24 55 / 70%);
 }
+/* The pizza photo melts into the blue: a feathered round edge instead of a hard plate rim. */
 .hero__plate {
   position: absolute;
+  inset: -12%;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 66%, rgb(0 0 0 / 55%) 82%, transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 66%, rgb(0 0 0 / 55%) 82%, transparent 100%);
+}
+/* A navy wash deepens toward the edge so the photo's background takes on the hero's colour. */
+.hero__plate::after {
+  content: '';
+  position: absolute;
   inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #004c70;
-  box-shadow:
-    0 0 0 8px rgb(255 255 255 / 10%),
-    0 40px 80px rgb(0 15 25 / 50%);
+  background: radial-gradient(circle closest-side, transparent 52%, rgb(0 58 87 / 70%) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 .hero__plate-scroll,
 .hero__plate-spin,
@@ -851,8 +857,7 @@ main:focus {
   visibility: visible;
 }
 .hero__slide .photo {
-  border-radius: 50%;
-  transform: scale(1.1);
+  transform: scale(1.04);
 }
 /* Steam rising off the pizza: blurred puffs drift up, swell and fade.
    Negative delays mean the steam is already flowing when the page opens. */
