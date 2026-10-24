@@ -214,44 +214,70 @@ function OrderAgain() {
   )
 }
 
+const WALLET_LOGOS = [
+  { name: 'Genie', file: 'genie.png' },
+  { name: 'eZ Cash', file: 'ezcash.png' },
+  { name: 'FriMi', file: 'frimi.png' },
+]
+
 function InfoBar() {
   const { state } = useStore()
   const { setLocationOpen } = useUi()
   const store = state.location ? STORE_BY_ID[state.location.storeId] : null
-  const mins = store ? (state.fulfilment === 'delivery' ? store.deliveryMins : store.pickupMins) : null
+  const delivery = state.fulfilment === 'delivery'
+  const mins = store ? (delivery ? store.deliveryMins : store.pickupMins) : null
   return (
-    <section className="container info-bar" aria-label="Delivery details">
-      <button type="button" className="info-card" onClick={() => setLocationOpen(true)}>
+    <section className="container info-bar" aria-label="Delivery and payment">
+      <button type="button" className="info-card info-card--where" onClick={() => setLocationOpen(true)}>
         <span className="info-card__icon">
-          <Icon name={state.fulfilment === 'delivery' ? 'scooter' : 'store'} size={22} />
+          <Icon name={delivery ? 'scooter' : 'store'} size={22} />
         </span>
         <span className="info-card__text">
-          {store ? (
-            <>
-              <strong>
-                {state.fulfilment === 'delivery' ? `Delivering to ${store.city}` : `Pickup from ${store.area}`}
-                {state.location?.address ? ` · ${state.location.address}` : ''}
-              </strong>
-              <span className="accent-text">
-                {state.fulfilment === 'delivery' ? 'Arrives in' : 'Ready in'} {mins![0]}–{mins![1]} min
-              </span>
-            </>
-          ) : (
-            <>
-              <strong>Delivery or pickup?</strong>
-              <span className="accent-text">Set your location to see arrival times</span>
-            </>
-          )}
+          <span className="info-card__label">{store ? (delivery ? 'Delivering to' : 'Pickup from') : 'Delivery or pickup'}</span>
+          <strong className="info-card__title">
+            {store ? (delivery ? store.city : `${store.area} store`) : 'Set your location'}
+            {store && delivery && state.location?.address ? <span className="info-card__addr"> · {state.location.address}</span> : null}
+          </strong>
+          <span className="info-card__eta">
+            {store ? (
+              <>
+                <span className="info-card__dot" aria-hidden="true" />
+                {delivery ? 'Arrives in' : 'Ready in'} {mins![0]}–{mins![1]} min
+              </>
+            ) : (
+              <>
+                <Icon name="clock" size={13} /> See arrival times near you
+              </>
+            )}
+          </span>
         </span>
-        <Icon name="chevronDown" size={18} />
+        <span className="info-card__action">
+          {store ? 'Change' : 'Choose'} <Icon name="chevronRight" size={15} />
+        </span>
       </button>
-      <div className="info-card info-card--static">
+      <div className="info-card info-card--pay">
         <span className="info-card__icon">
           <Icon name="shield" size={22} />
         </span>
         <span className="info-card__text">
-          <strong>Pay your way, securely</strong>
-          <span className="muted small">Cash, card on delivery or secure online card payment</span>
+          <span className="info-card__label">Pay your way</span>
+          <strong className="info-card__title">Secure checkout</strong>
+          <ul className="pay-methods" aria-label="Accepted payment methods">
+            <li>
+              <Icon name="cash" size={14} /> Cash
+            </li>
+            <li>
+              <Icon name="card" size={14} /> Card
+            </li>
+            {WALLET_LOGOS.map((w) => (
+              <li key={w.name} className="pay-methods__logo" title={w.name}>
+                <img src={`${import.meta.env.BASE_URL}wallets/${w.file}`} alt={w.name} />
+              </li>
+            ))}
+            <li>
+              <Icon name="qr" size={14} /> LankaQR
+            </li>
+          </ul>
         </span>
       </div>
     </section>
