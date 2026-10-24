@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   Banknote,
+  CalendarClock,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -37,6 +38,7 @@ import {
   User,
   WifiOff,
   X,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -80,6 +82,8 @@ const ICONS = {
   mobile: Smartphone,
   qr: QrCode,
   loader: LoaderCircle,
+  zap: Zap,
+  calendar: CalendarClock,
 } satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof ICONS

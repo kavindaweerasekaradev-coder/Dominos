@@ -204,30 +204,45 @@ export function Checkout() {
             )}
 
             <div className="field">
-              <span className="label">When?</span>
-              <div className="when">
-                <label className={`choice ${when === 'asap' ? 'is-on' : ''}`}>
+              <span className="label" id="when-label">
+                When?
+              </span>
+              <div className="when" role="radiogroup" aria-labelledby="when-label">
+                <label className={`choice when__opt ${when === 'asap' ? 'is-on' : ''}`}>
                   <input type="radio" name="when" checked={when === 'asap'} onChange={() => setWhen('asap')} />
+                  <span className="choice__icon">
+                    <Icon name="zap" size={18} />
+                  </span>
                   <span className="choice__text">
                     <strong>As soon as possible</strong>
-                    {store && <span className="muted small">About {(delivery ? store.deliveryMins : store.pickupMins).join('–')} min</span>}
+                    <span className="muted small">
+                      {store ? `About ${(delivery ? store.deliveryMins : store.pickupMins).join('–')} min` : 'Fastest available'}
+                    </span>
                   </span>
+                  <span className="when__radio" aria-hidden="true" />
                 </label>
-                <label className={`choice ${when !== 'asap' ? 'is-on' : ''}`}>
+                <label className={`choice when__opt ${when !== 'asap' ? 'is-on' : ''}`}>
                   <input type="radio" name="when" checked={when !== 'asap'} onChange={() => setWhen(slots[0])} />
+                  <span className="choice__icon">
+                    <Icon name="calendar" size={18} />
+                  </span>
                   <span className="choice__text">
                     <strong>Schedule for later</strong>
-                    <span className="muted small">Today</span>
+                    <span className="muted small">{when === 'asap' ? 'Pick a time today' : `Today at ${when}`}</span>
                   </span>
-                  {when !== 'asap' && (
-                    <select aria-label="Time" value={when} onChange={(e) => setWhen(e.target.value)}>
-                      {slots.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                  )}
+                  <span className="when__radio" aria-hidden="true" />
                 </label>
               </div>
+              {when !== 'asap' && (
+                <div className="when__slots" role="radiogroup" aria-label={`${delivery ? 'Delivery' : 'Pickup'} time, today`}>
+                  {slots.map((s) => (
+                    <label key={s} className={`when__slot ${when === s ? 'is-on' : ''}`}>
+                      <input type="radio" name="slot" checked={when === s} onChange={() => setWhen(s)} />
+                      {s}
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
