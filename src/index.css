@@ -1223,14 +1223,43 @@ main:focus {
     display: none;
   }
 }
-/* Scrolling offers banner */
+/* Scrolling offers banner: a red tape crossing a blue one, like a shopfront promo. */
 .ticker {
-  margin: 28px -20px 0;
+  position: relative;
+  margin: 36px -20px 12px;
+}
+.ticker__back {
+  position: absolute;
+  inset: 0;
+  rotate: 1.6deg;
+  background:
+    var(--domino-pattern-light) 0 0 / 120px 120px,
+    linear-gradient(90deg, var(--navy), var(--brand));
+  box-shadow: 0 10px 24px rgb(0 58 87 / 22%);
+}
+.ticker__band {
+  position: relative;
   rotate: -1.2deg;
-  background: var(--red);
-  color: #fff;
   overflow: hidden;
-  box-shadow: 0 10px 24px rgb(227 24 55 / 25%);
+  background: linear-gradient(180deg, var(--red), var(--red-strong));
+  color: #fff;
+  box-shadow: 0 14px 30px rgb(227 24 55 / 28%);
+}
+/* Stitched edges, like tape. */
+.ticker__band::before,
+.ticker__band::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  border-top: 1.5px dashed rgb(255 255 255 / 38%);
+  pointer-events: none;
+  z-index: 1;
+}
+.ticker__band::before {
+  top: 5px;
+}
+.ticker__band::after {
+  bottom: 5px;
 }
 .ticker__track {
   display: flex;
@@ -1240,15 +1269,64 @@ main:focus {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 28px;
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  padding: 16px 0 16px 28px;
+  font-size: 15.5px;
+  font-weight: 600;
   white-space: nowrap;
+  color: rgb(255 255 255 / 92%);
 }
-.ticker__track svg {
+.ticker__track li > svg:first-child {
+  flex-shrink: 0;
   color: #fff;
+}
+.ticker__key {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--red-strong);
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 12%);
+}
+.ticker__tile {
+  width: 18px;
+  height: 18px;
+  margin-left: 18px;
+  rotate: -16deg;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 15%));
+}
+.ticker__track li:nth-child(even) .ticker__tile {
+  rotate: 14deg;
+}
+.ticker__toggle {
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--red-strong);
+  cursor: pointer;
+  box-shadow:
+    0 0 0 6px var(--red-strong),
+    -24px 0 24px 6px var(--red-strong);
+  transition: scale 0.15s;
+}
+.ticker__toggle:hover {
+  scale: 1.08;
+}
+.ticker__toggle:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 
 @media (max-width: 960px) {
@@ -1319,9 +1397,22 @@ main:focus {
   .hero__buy-price {
     align-items: flex-start;
   }
+  .ticker {
+    margin-top: 28px;
+  }
   .ticker__track li {
-    font-size: 15px;
-    padding: 12px 20px;
+    font-size: 14px;
+    padding: 13px 0 13px 20px;
+  }
+  .ticker__key {
+    font-size: 14px;
+    padding: 3px 9px;
+  }
+  .ticker__tile {
+    margin-left: 12px;
+  }
+  .ticker__toggle {
+    right: 24px;
   }
 }
 

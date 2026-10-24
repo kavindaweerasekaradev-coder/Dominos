@@ -7,18 +7,20 @@ import { useUi } from '../state/ui'
 import { useQuickAdd } from '../state/useQuickAdd'
 import { useUntilMidnight } from '../state/useUntilMidnight'
 import { FoodPhoto } from './FoodPhoto'
-import { Icon } from './Icon'
+import { DominoTile } from './Domino'
+import { Icon, type IconName } from './Icon'
 
 const FEATURED = ['devilled-chicken', 'pepperoni-classic', 'kochchi-paneer', 'margherita'].map((id) => PRODUCT_BY_ID[id] as PizzaProduct)
 const SLIDE_SECONDS = 5
-const TICKER = [
-  `2 Medium pizzas for ${lkr(3990)}`,
-  `Free delivery over ${lkr(4000)}`,
-  '20% off Large pizzas',
-  '15% off on pickup',
-  'Best deal applied automatically',
-  'Prices include all taxes',
-  '50+ stores islandwide',
+const MOTION_ALLOWED = window.matchMedia(MOTION_OK).matches
+const TICKER: { icon: IconName; key: string; text: string }[] = [
+  { icon: 'tag', key: lkr(3990), text: 'for 2 Medium pizzas' },
+  { icon: 'scooter', key: 'Free delivery', text: `over ${lkr(4000)}` },
+  { icon: 'pizza', key: '20% off', text: 'Large pizzas' },
+  { icon: 'store', key: '15% off', text: 'on pickup' },
+  { icon: 'sparkle', key: 'Best deal', text: 'applied automatically' },
+  { icon: 'receipt', key: 'All taxes', text: 'included in prices' },
+  { icon: 'pin', key: '50+ stores', text: 'islandwide' },
 ]
 
 export function Hero() {
@@ -33,6 +35,10 @@ export function Hero() {
   const [playing, setPlaying] = useState(() => window.matchMedia(MOTION_OK).matches)
   const [dragX, setDragX] = useState(0)
   const drag = useRef<{ x: number; moved: boolean } | null>(null)
+  const ticker = useRef<gsap.core.Tween | null>(null)
+  const [tickerOn, setTickerOn] = useState(MOTION_ALLOWED)
+  // The offers ribbon pauses while it's hovered, and stays paused if the visitor stops it.
+  const syncTicker = (on: boolean) => (on ? ticker.current?.play() : ticker.current?.pause())
   const pizza = FEATURED[index]
   const count = FEATURED.length
   const go = (n: number) => setIndex(((n % count) + count) % count)
@@ -59,7 +65,7 @@ export function Hero() {
           .from(q('.hero__panel'), { y: 40, autoAlpha: 0, duration: 0.9 }, 1.1)
           .from(q('.ticker'), { autoAlpha: 0, duration: 0.6 }, 1.3)
 
-        gsap.to(q('.ticker__track'), { xPercent: -50, duration: 32, ease: 'none', repeat: -1 })
+        ticker.current = gsap.to(q('.ticker__track'), { xPercent: -50, duration: 40, ease: 'none', repeat: -1 })
 
         // Scroll: the deck tilts away gently and the copy fades as the hero leaves.
         const scrub = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 }
@@ -288,14 +294,34 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="ticker" aria-label="Current offers">
-        <ul className="ticker__track">
-          {[...TICKER, ...TICKER].map((t, i) => (
-            <li key={i} aria-hidden={i >= TICKER.length}>
-              <Icon name="sparkle" size={14} /> {t}
-            </li>
-          ))}
-        </ul>
+      <div className="ticker" onMouseEnter={() => syncTicker(false)} onMouseLeave={() => syncTicker(tickerOn)}>
+        <div className="ticker__back" aria-hidden="true" />
+        <div className="ticker__band">
+          <ul className="ticker__track" aria-label="Current offers">
+            {[...TICKER, ...TICKER].map((t, i) => (
+              <li key={i} aria-hidden={i >= TICKER.length}>
+                <Icon name={t.icon} size={18} />
+                <strong className="ticker__key">{t.key}</strong>
+                {t.text}
+                <DominoTile pips={((i % 3) + 1) as 1 | 2 | 3} tone="white" className="ticker__tile" />
+              </li>
+            ))}
+          </ul>
+          {MOTION_ALLOWED && (
+            <button
+              type="button"
+              className="ticker__toggle"
+              onClick={() => {
+                const on = !tickerOn
+                setTickerOn(on)
+                syncTicker(on)
+              }}
+              aria-label={tickerOn ? 'Pause offers ribbon' : 'Play offers ribbon'}
+            >
+              <Icon name={tickerOn ? 'pause' : 'play'} size={14} />
+            </button>
+          )}
+        </div>
       </div>
     </section>
   )
