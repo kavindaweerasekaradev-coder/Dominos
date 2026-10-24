@@ -7,6 +7,7 @@ import { MOTION_OK, ScrollTrigger, gsap, useGSAP } from '../lib/gsap'
 import { describeItem, lkr } from '../lib/pricing'
 import { useStore } from '../state/store'
 import { useUi } from '../state/ui'
+import { AdPosters } from './AdPosters'
 import { Deals } from './Deals'
 import { FoodPhoto } from './FoodPhoto'
 import { Hero } from './Hero'
@@ -324,7 +325,7 @@ export function Home() {
     () => {
       gsap.matchMedia().add(MOTION_OK, () => {
         const targets = gsap.utils.toArray<HTMLElement>(
-          '.section__head, .loved__head, .loved-card, .menu__group-title, .panel, .how__head, .how__step, .product-card, .info-card',
+          '.section__head, .ads__head, .ad, .loved__head, .loved-card, .menu__group-title, .panel, .how__head, .how__step, .product-card, .info-card',
           scope.current,
         )
         gsap.set(targets, { opacity: 0, y: 36 })
@@ -356,6 +357,12 @@ export function Home() {
 
       {browsing && (
         <>
+          <AdPosters
+            onPickPizzas={() => {
+              setCategory('pizza')
+              scrollToMenu()
+            }}
+          />
           <LovedRail title={store ? `Most loved in ${store.city}` : 'Most loved right now'} note="Based on what people near you order" products={loved} />
           <Deals
             onPickPizzas={() => {
