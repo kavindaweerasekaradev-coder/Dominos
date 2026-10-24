@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { CATEGORIES, PRODUCT_BY_ID, type CategoryId } from '../data/menu'
 import { HOTLINE } from '../data/stores'
 import { scrollToSection, showMenuCategory } from '../lib/dom'
@@ -14,6 +14,63 @@ import { Logo } from './Header'
 import { Icon, type IconName } from './Icon'
 
 const TEL = `tel:${HOTLINE.replace(/\s/g, '')}`
+const WALLETS = [
+  { name: 'Genie', file: 'genie.png' },
+  { name: 'eZ Cash', file: 'ezcash.png' },
+  { name: 'FriMi', file: 'frimi.png' },
+]
+
+/** True on screens wider than a phone, where footer link lists are always open. */
+function useWide() {
+  const query = '(min-width: 601px)'
+  const [wide, setWide] = useState(() => window.matchMedia(query).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(query)
+    const on = () => setWide(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return wide
+}
+
+/** A footer link list: an always-open column on wider screens, a tap-to-open section on phones. */
+function Fold({
+  id,
+  title,
+  wide,
+  open,
+  onToggle,
+  children,
+}: {
+  id: string
+  title: string
+  wide: boolean
+  open: boolean
+  onToggle: () => void
+  children: ReactNode
+}) {
+  if (wide) {
+    return (
+      <>
+        <h2 id={id}>{title}</h2>
+        {children}
+      </>
+    )
+  }
+  return (
+    <>
+      <h2 id={id} className="footer-fold__head">
+        <button type="button" aria-expanded={open} aria-controls={`${id}-list`} onClick={onToggle}>
+          {title}
+          <Icon name="chevronDown" size={18} />
+        </button>
+      </h2>
+      <div id={`${id}-list`} className="footer-fold__body" hidden={!open}>
+        {children}
+      </div>
+    </>
+  )
+}
 const YEAR = new Date().getFullYear()
 
 export function Footer({ route }: { route: Route }) {
@@ -23,6 +80,24 @@ export function Footer({ route }: { route: Route }) {
   const open = useOpenNow()
   const onHome = route.name === 'home'
   const latest = state.orders[0]
+  const wide = useWide()
+  const [folds, setFolds] = useState<Set<string>>(() => new Set())
+  const toggleFold = (id: string) =>
+    setFolds((f) => {
+      const next = new Set(f)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  const [trackId, setTrackId] = useState('')
+  const [trackError, setTrackError] = useState('')
+  const track = (e: React.FormEvent) => {
+    e.preventDefault()
+    const raw = (trackId.trim() || latest?.id || '').toUpperCase().replace(/\s/g, '')
+    const m = /^(?:DLK-?)?(\d{5})$/.exec(raw)
+    if (!m) return setTrackError('Enter your order number, for example DLK-12345.')
+    navigate(`/order/DLK-${m[1]}`)
+  }
 
   const goTo = (section: string) => {
     if (onHome) scrollToSection(section)
@@ -158,49 +233,68 @@ export function Footer({ route }: { route: Route }) {
           </div>
 
           <nav className="footer-col" aria-labelledby="f-menu">
-            <h2 id="f-menu">Menu</h2>
-            <ul>
-              {CATEGORIES.map((c) => (
-                <li key={c.id}>
-                  <button type="button" onClick={() => pickCategory(c.id)}>
-                    {c.label} <Icon name="chevronRight" size={14} />
+            <Fold id="f-menu" title="Menu" wide={wide} open={folds.has('menu')} onToggle={() => toggleFold('menu')}>
+              <ul>
+                {CATEGORIES.map((c) => (
+                  <li key={c.id}>
+                    <button type="button" onClick={() => pickCategory(c.id)}>
+                      {c.label} <Icon name="chevronRight" size={14} />
+                    </button>
+                  </li>
+                ))}
+                <li>
+                  <button type="button" onClick={() => goTo('deals')}>
+                    Today’s deals <Icon name="chevronRight" size={14} />
                   </button>
                 </li>
-              ))}
-              <li>
-                <button type="button" onClick={() => goTo('deals')}>
-                  Today’s deals <Icon name="chevronRight" size={14} />
-                </button>
-              </li>
-            </ul>
+              </ul>
+            </Fold>
           </nav>
 
           <nav className="footer-col" aria-labelledby="f-order">
-            <h2 id="f-order">Your order</h2>
-            <ul>
-              <li>
-                <button type="button" onClick={() => setCartOpen(true)}>
-                  View cart <Icon name="chevronRight" size={14} />
-                </button>
-              </li>
-              {latest && (
+            <Fold id="f-order" title="Your order" wide={wide} open={folds.has('order')} onToggle={() => toggleFold('order')}>
+              <ul>
                 <li>
-                  <a href={`#/order/${latest.id}`}>
-                    Track order {latest.id} <Icon name="chevronRight" size={14} />
-                  </a>
+                  <button type="button" onClick={() => setCartOpen(true)}>
+                    View cart <Icon name="chevronRight" size={14} />
+                  </button>
                 </li>
-              )}
-              <li>
-                <button type="button" onClick={() => setLocationOpen(true)}>
-                  Delivery or pickup <Icon name="chevronRight" size={14} />
-                </button>
-              </li>
-              <li>
-                <button type="button" onClick={() => setLocationOpen(true)}>
-                  Find your store <Icon name="chevronRight" size={14} />
-                </button>
-              </li>
-            </ul>
+                <li>
+                  <button type="button" onClick={() => setLocationOpen(true)}>
+                    Delivery or pickup <Icon name="chevronRight" size={14} />
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => setLocationOpen(true)}>
+                    Find your store <Icon name="chevronRight" size={14} />
+                  </button>
+                </li>
+              </ul>
+              {/* Track an order by its number, prefilled with the latest one on this device. */}
+              <form className="footer-track" onSubmit={track} noValidate>
+                <label htmlFor="track-id">Track an order</label>
+                <div className="footer-track__row">
+                  <input
+                    id="track-id"
+                    value={trackId}
+                    onChange={(e) => {
+                      setTrackId(e.target.value)
+                      setTrackError('')
+                    }}
+                    placeholder={latest?.id ?? 'DLK-12345'}
+                    autoCapitalize="characters"
+                    aria-invalid={!!trackError}
+                    aria-describedby={trackError ? 'track-error' : undefined}
+                  />
+                  <button type="submit">Track</button>
+                </div>
+                {trackError && (
+                  <p id="track-error" className="footer-track__error" role="alert">
+                    {trackError}
+                  </p>
+                )}
+              </form>
+            </Fold>
           </nav>
 
           <div className="footer-col footer-contact">
@@ -223,9 +317,15 @@ export function Footer({ route }: { route: Route }) {
                 <Icon name="card" size={16} /> Card
               </li>
               <li>
-                <Icon name="shield" size={16} /> Online
+                <Icon name="qr" size={16} /> LankaQR
               </li>
             </ul>
+            <p className="footer-wallets">
+              <span>Mobile wallets</span>
+              {WALLETS.map((w) => (
+                <img key={w.name} src={`${import.meta.env.BASE_URL}wallets/${w.file}`} alt={w.name} title={w.name} />
+              ))}
+            </p>
           </div>
         </div>
 

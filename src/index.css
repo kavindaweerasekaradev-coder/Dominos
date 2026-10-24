@@ -3233,37 +3233,39 @@ button.info-card:hover .info-card__action svg {
   padding-top: 56px;
 }
 /* Four promises in a row of tiles across the top of the footer. */
+/* One slim row of promises, split by fine dividers. */
 .footer-perks {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 56px;
+  margin-bottom: 48px;
+  padding-block: 18px;
+  border-block: 1px solid rgb(255 255 255 / 14%);
 }
 .footer-perks li {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  border-radius: 20px;
-  background: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 12%);
+  gap: 12px;
+  padding: 4px 20px;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
   color: #fff;
 }
+.footer-perks li:first-child {
+  padding-left: 0;
+}
+.footer-perks li + li {
+  border-left: 1px solid rgb(255 255 255 / 14%);
+}
 .footer-perks__icon {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 14px;
-  background: #fff;
-  color: var(--brand);
-}
-.footer-perks li:nth-child(even) .footer-perks__icon {
-  color: var(--red);
+  border-radius: 11px;
+  background: rgb(255 255 255 / 12%);
+  color: #fff;
 }
 .footer-grid {
   display: grid;
@@ -3456,6 +3458,123 @@ button.info-card:hover .info-card__action svg {
 .footer-pay svg {
   color: var(--brand);
 }
+.footer-wallets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 85%);
+}
+.footer-wallets span {
+  margin-right: 2px;
+}
+.footer-wallets img {
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #fff;
+  object-fit: contain;
+}
+.footer-brand > p.footer-open {
+  max-width: none;
+}
+/* Track an order by number. */
+.footer-track {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+.footer-track label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 80%);
+}
+.footer-track__row {
+  display: flex;
+  max-width: 260px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.footer-track__row:focus-within {
+  border-color: #fff;
+  background: rgb(255 255 255 / 14%);
+}
+.footer-track input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  outline: none;
+}
+.footer-track input::placeholder {
+  color: rgb(255 255 255 / 60%);
+}
+.footer-track button {
+  padding: 0 14px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 800;
+  transition: background 0.15s;
+}
+.footer-track button:hover {
+  background: var(--brand-soft);
+}
+.footer-track__error {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fff;
+}
+/* Phone sections: a full-width row that opens and closes its list. */
+.footer-fold__head {
+  margin: 0;
+}
+.footer-fold__head button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  padding: 0;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+  color: #fff;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.footer-fold__head button svg {
+  transition: rotate 0.25s;
+}
+.footer-fold__head button[aria-expanded='true'] svg {
+  rotate: 180deg;
+}
+.footer-fold__body {
+  padding-bottom: 14px;
+}
+.footer-col .footer-fold__head {
+  margin-bottom: 0;
+}
+.footer-col .footer-fold__head::before {
+  display: none;
+}
 /* Big closing line in soft white, with red domino pips for full stops. */
 .footer-slogan {
   display: flex;
@@ -3560,6 +3679,11 @@ button.info-card:hover .info-card__action svg {
 @media (max-width: 1100px) {
   .footer-perks {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+  .footer-perks li:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
   }
 }
 @media (max-width: 960px) {
@@ -3607,24 +3731,36 @@ button.info-card:hover .info-card__action svg {
 }
 @media (max-width: 480px) {
   .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 28px 16px;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .footer-brand {
+    margin-bottom: 20px;
   }
   .footer-contact {
-    grid-column: 1 / -1;
+    padding-top: 18px;
+    border-top: 1px solid rgb(255 255 255 / 14%);
+  }
+  .footer-contact h2::before {
+    display: none;
   }
   .footer-perks {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-bottom: 40px;
+    gap: 14px 12px;
+    margin-bottom: 28px;
   }
   .footer-perks li {
-    padding: 12px 14px;
+    padding: 0;
+    border-left: 0;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .footer-perks li + li {
+    border-left: 0;
   }
   .footer-perks__icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
   }
   .footer-slogan {
     margin-top: 44px;
@@ -3632,6 +3768,13 @@ button.info-card:hover .info-card__action svg {
   }
   .footer-slogan span {
     font-size: 10vw;
+  }
+  /* The banner's job on a phone is the message and buttons; drop the big pizza to keep it short. */
+  .footer-cta__visual {
+    display: none;
+  }
+  .footer-cta {
+    padding-bottom: 32px;
   }
 }
 
