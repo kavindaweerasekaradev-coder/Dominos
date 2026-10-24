@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { PRODUCT_BY_ID, type PizzaProduct } from '../data/menu'
 import { scrollToSection } from '../lib/dom'
 import { MOTION_OK, gsap, SplitText, useGSAP } from '../lib/gsap'
@@ -23,6 +23,7 @@ const TICKER = [
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
+  const smokeId = `smoke${useId().replace(/:/g, '')}`
   const quickAdd = useQuickAdd()
   const timeLeft = useUntilMidnight()
   const [index, setIndex] = useState(0)
@@ -206,6 +207,19 @@ export function Hero() {
                       ))}
                     </div>
                   </div>
+                </div>
+                {/* Steam: soft puffs rise off the pizza; the SVG filter breaks them into wisps. */}
+                <svg className="hero__smoke-defs" aria-hidden="true" focusable="false">
+                  <filter id={smokeId} x="-30%" y="-30%" width="160%" height="160%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.018" numOctaves="2" seed="7" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G" />
+                    <feGaussianBlur stdDeviation="3.5" />
+                  </filter>
+                </svg>
+                <div className="hero__smoke" style={{ filter: `url(#${smokeId})` }} aria-hidden="true">
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <span key={i} />
+                  ))}
                 </div>
                 <div className="hero__price" aria-hidden="true">
                   <small>From</small>

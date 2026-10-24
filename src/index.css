@@ -848,6 +848,118 @@ main:focus {
   border-radius: 50%;
   transform: scale(1.1);
 }
+/* Steam rising off the pizza: blurred puffs drift up, swell and fade.
+   Negative delays mean the steam is already flowing when the page opens. */
+.hero__smoke-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.hero__smoke {
+  position: absolute;
+  z-index: 2;
+  left: -6%;
+  right: -6%;
+  top: -42%;
+  bottom: 30%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.hero__smoke span {
+  position: absolute;
+  left: calc(var(--x) - var(--size) / 2);
+  bottom: 0;
+  width: var(--size);
+  aspect-ratio: 0.72;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 58%, rgb(255 255 255 / 92%) 0%, rgb(255 255 255 / 45%) 34%, transparent 70%);
+  opacity: 0;
+  animation: steam-rise 8s cubic-bezier(0.3, 0.1, 0.4, 1) infinite;
+}
+.hero__smoke span:nth-child(1) {
+  --x: 32%;
+  --size: 30%;
+  --dx: -34px;
+  animation-duration: 7.5s;
+  animation-delay: -0s;
+}
+.hero__smoke span:nth-child(2) {
+  --x: 48%;
+  --size: 34%;
+  --dx: 26px;
+  animation-duration: 8.5s;
+  animation-delay: -1.1s;
+}
+.hero__smoke span:nth-child(3) {
+  --x: 64%;
+  --size: 28%;
+  --dx: -22px;
+  animation-duration: 7s;
+  animation-delay: -2.4s;
+}
+.hero__smoke span:nth-child(4) {
+  --x: 41%;
+  --size: 26%;
+  --dx: 44px;
+  animation-duration: 9s;
+  animation-delay: -3.6s;
+}
+.hero__smoke span:nth-child(5) {
+  --x: 56%;
+  --size: 32%;
+  --dx: -38px;
+  animation-duration: 8s;
+  animation-delay: -4.9s;
+}
+.hero__smoke span:nth-child(6) {
+  --x: 36%;
+  --size: 24%;
+  --dx: 22px;
+  animation-duration: 7.2s;
+  animation-delay: -6s;
+}
+.hero__smoke span:nth-child(7) {
+  --x: 52%;
+  --size: 22%;
+  --dx: -12px;
+  animation-duration: 6.6s;
+  animation-delay: -0.5s;
+}
+.hero__smoke span:nth-child(8) {
+  --x: 45%;
+  --size: 28%;
+  --dx: 10px;
+  animation-duration: 8.2s;
+  animation-delay: -2.9s;
+}
+.hero__smoke span:nth-child(9) {
+  --x: 60%;
+  --size: 24%;
+  --dx: 30px;
+  animation-duration: 7.8s;
+  animation-delay: -5.6s;
+}
+@keyframes steam-rise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 10%) scale(0.4);
+  }
+  24% {
+    opacity: 0.85;
+  }
+  62% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), -165%) scale(1.75);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__smoke {
+    display: none;
+  }
+}
 /* Round white price badge with a dashed red inner ring. */
 .hero__price {
   position: absolute;
