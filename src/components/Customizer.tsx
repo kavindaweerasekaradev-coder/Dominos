@@ -101,8 +101,16 @@ function CustomizerSheet({ productId, editKey, drafts }: { productId: string; ed
               <Icon name="plus" size={18} />
             </button>
           </div>
-          <button type="button" className="btn btn--hot btn--lg btn--grow" onClick={submit}>
-            <span>{editing ? 'Update item' : 'Add to cart'}</span>
+          <button
+            type="button"
+            className="btn btn--hot btn--lg customizer__add"
+            onClick={submit}
+            aria-label={`${editing ? 'Update item' : 'Add to cart'}, ${lkr(unit * draft.qty)}`}
+          >
+            <span>
+              {editing ? 'Update' : 'Add'}
+              <span className="customizer__add-more">{editing ? ' item' : ' to cart'}</span>
+            </span>
             <span className="btn__price" aria-live="polite">
               {lkr(unit * draft.qty)}
             </span>

@@ -4577,6 +4577,28 @@ button.info-card:hover .info-card__action svg {
   gap: 10px 12px;
   align-items: center;
 }
+/* Add to cart hugs its label and price and sits on the right, like Place order at checkout. */
+.customizer__add {
+  margin-left: auto;
+  gap: 24px;
+  padding-inline: 24px;
+}
+@media (max-width: 420px) {
+  .customizer__add {
+    flex: 1;
+    justify-content: space-between;
+  }
+}
+/* Smallest phones: "Add Rs 5,240" so it stays beside the quantity stepper. */
+@media (max-width: 360px) {
+  .customizer__add-more {
+    display: none;
+  }
+  .customizer__add {
+    gap: 12px;
+    padding-inline: 18px;
+  }
+}
 .customizer__summary {
   flex-basis: 100%;
   display: flex;
