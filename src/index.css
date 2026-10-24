@@ -6225,77 +6225,107 @@ button.info-card:hover .info-card__action svg {
 }
 .ads__track {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
 }
-@media (max-width: 1100px) {
+@media (max-width: 860px) {
   .ads__track {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 }
-/* Phones: a swipeable row of posters. */
-@media (max-width: 600px) {
-  .ads__track {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 82%;
-    gap: 14px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    margin-inline: -16px;
-    padding: 4px 16px 12px;
-    scroll-padding-inline: 16px;
-  }
-  .ads__track::-webkit-scrollbar {
-    display: none;
-  }
-  .ads__track > * {
-    scroll-snap-align: start;
-  }
-}
-/* Each poster is sized in container units, so it scales like a printed ad. */
+/* Each banner is sized in container units, so it scales like a printed ad. */
 .ad {
-  --sticker: var(--red);
+  --accent: var(--red);
+  --accent-ink: #fff;
   container-type: inline-size;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  aspect-ratio: 4 / 5;
-  border-radius: 26px;
+  display: grid;
+  border-radius: 28px;
   color: #fff;
-  background: radial-gradient(circle at 82% 12%, #2a9fd9 0%, transparent 45%), linear-gradient(165deg, #0a74b5 0%, var(--brand) 45%, #003a57 100%);
-  box-shadow: 0 18px 40px rgb(0 37 55 / 22%);
+  background:
+    radial-gradient(rgb(255 255 255 / 9%) 1px, transparent 1.4px) 0 0 / 2.2cqw 2.2cqw,
+    linear-gradient(150deg, #0a74b5 0%, var(--brand) 42%, #003a57 100%);
+  box-shadow: 0 24px 50px rgb(0 37 55 / 24%);
 }
 .ad--red {
-  --sticker: var(--brand);
-  background: radial-gradient(circle at 82% 12%, #ff5a74 0%, transparent 45%), linear-gradient(165deg, #f0304d 0%, var(--red) 45%, #7d0a1c 100%);
-  box-shadow: 0 18px 40px rgb(120 10 30 / 25%);
+  --accent: var(--navy);
+  background:
+    radial-gradient(rgb(255 255 255 / 10%) 1px, transparent 1.4px) 0 0 / 2.2cqw 2.2cqw,
+    linear-gradient(150deg, #f0304d 0%, var(--red) 42%, #8c0b20 100%);
+  box-shadow: 0 24px 50px rgb(140 10 30 / 26%);
 }
-/* The diagonal dotted band across the lower half. */
-.ad__band {
+/* Sets the banner's shape as a minimum; the copy can make it taller (aspect-ratio can't with overflow hidden). */
+.ad::before {
+  content: '';
+  grid-area: 1 / 1;
+  padding-top: 75.75%;
+}
+/* A fine inner border for a finished edge. */
+.ad::after {
+  content: '';
   position: absolute;
-  inset: 0;
+  inset: 1.6cqw;
+  border-radius: 20px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  pointer-events: none;
+}
+/* Soft spotlight behind the pizza. */
+.ad__glow {
+  position: absolute;
   z-index: -1;
-  background:
-    radial-gradient(rgb(255 255 255 / 16%) 1px, transparent 1.6px) 0 0 / 2.6cqw 2.6cqw,
-    linear-gradient(120deg, #a50d24, var(--red));
-  clip-path: polygon(0 56%, 100% 30%, 100% 50%, 0 100%);
+  right: -18cqw;
+  top: 4cqw;
+  width: 80cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 255 255 / 30%) 0%, rgb(255 255 255 / 8%) 40%, transparent 68%);
 }
-.ad--red .ad__band {
-  background:
-    radial-gradient(rgb(255 255 255 / 14%) 1px, transparent 1.6px) 0 0 / 2.6cqw 2.6cqw,
-    linear-gradient(120deg, #003a57, var(--brand));
+.ad__photo {
+  position: absolute;
+  right: -11cqw;
+  top: 13cqw;
+  width: 58cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 1.3cqw;
+  background: #fff;
+  box-shadow:
+    0 0 0 1.6cqw rgb(255 255 255 / 14%),
+    0 5cqw 9cqw rgb(0 0 0 / 35%);
 }
-.ad__logo {
+.ad__photo-spin {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  animation: ad-spin 70s linear infinite;
+}
+.ad__photo-spin .photo {
+  transform: scale(1.1);
+}
+@keyframes ad-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+.ad__top {
   position: absolute;
   top: 5cqw;
-  right: 5cqw;
+  left: 5.5cqw;
+  right: 5.5cqw;
   display: flex;
   align-items: center;
-  gap: 1.6cqw;
+  justify-content: space-between;
+}
+.ad__logo {
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
   font-family: var(--display);
-  font-size: max(13px, 4.8cqw);
+  font-size: max(13px, 3.6cqw);
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -6304,197 +6334,186 @@ button.info-card:hover .info-card__action svg {
   border-radius: 7px;
   background: #fff;
 }
-.ad__tcs {
-  position: absolute;
-  z-index: 4;
-  top: 15cqw;
-  right: 2.2cqw;
-  writing-mode: vertical-rl;
-  font-size: max(9px, 2.6cqw);
-  font-weight: 700;
-  opacity: 0.8;
-}
-/* Big slanted poster headline. */
-.ad__headline {
-  position: absolute;
-  z-index: 2;
-  top: 20cqw;
-  left: 6cqw;
-  display: flex;
-  flex-direction: column;
-  font-family: var(--display);
-  font-size: 10cqw;
-  font-weight: 800;
-  line-height: 0.86;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  transform: rotate(-6deg);
-  transform-origin: left top;
-  text-shadow: 0 0.8cqw 0 rgb(0 0 0 / 22%);
-}
-.ad__headline .is-big {
-  font-size: 1.34em;
-}
-.ad__headline > span {
-  display: flex;
-  align-items: center;
-  gap: 2cqw;
-}
-.ad__swoosh {
-  width: 0.9em;
-  flex-shrink: 0;
-  margin-top: -0.3em;
-  fill: none;
-  stroke: #fff;
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-.ad__photo {
-  position: absolute;
-  z-index: 1;
-  top: 44cqw;
-  right: -14cqw;
-  width: 66cqw;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 50%;
-  border: 1.6cqw solid #fff;
-  background: var(--navy);
-  box-shadow: 0 4cqw 8cqw rgb(0 0 0 / 35%);
-  transition: rotate 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.ad__photo .photo {
-  transform: scale(1.12);
-}
-.ad:hover .ad__photo {
-  rotate: 12deg;
-}
-/* Price sticker with the old price struck through. */
-.ad__sticker {
-  position: absolute;
-  z-index: 3;
-  top: 62cqw;
-  left: 5cqw;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-areas: 'label label' 'value was';
-  align-items: end;
-  column-gap: 2cqw;
-  padding: 2.4cqw 4cqw 2.8cqw;
-  border-radius: 4cqw;
-  border: 0.9cqw solid #fff;
-  background: var(--sticker);
-  box-shadow: 0 2cqw 5cqw rgb(0 0 0 / 30%);
-  transform: rotate(-7deg);
-  transition: transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-.ad:hover .ad__sticker {
-  transform: rotate(-3deg) scale(1.04);
-}
-.ad__sticker-label {
-  grid-area: label;
-  font-size: max(10px, 3.5cqw);
-  font-weight: 800;
-  letter-spacing: 0.01em;
-}
-.ad__sticker-value {
-  grid-area: value;
-  display: flex;
-  align-items: baseline;
-  gap: 1cqw;
-  font-family: var(--display);
-  font-size: 14cqw;
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-}
-.ad__sticker-rs,
-.ad__sticker-unit {
-  font-size: 0.34em;
-  letter-spacing: 0;
-}
-.ad__sticker-was {
-  grid-area: was;
-  padding-bottom: 1.4cqw;
-  font-size: max(11px, 4.2cqw);
-  font-weight: 800;
-  opacity: 0.85;
-  text-decoration-thickness: 0.6cqw;
-}
 .ad__live {
-  position: absolute;
-  z-index: 3;
-  right: 6cqw;
-  top: 48cqw;
-  padding: 1.8cqw 3cqw;
-  border-radius: 3cqw;
-  border: 0.8cqw solid #fff;
-  background: var(--red);
-  font-family: var(--display);
-  font-size: 6.2cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4cqw;
+  padding: 1cqw 2.4cqw;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 16%);
+  border: 1px solid rgb(255 255 255 / 30%);
+  backdrop-filter: blur(6px);
+  font-size: max(11px, 2.6cqw);
   font-weight: 800;
-  line-height: 0.9;
-  text-align: center;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  transform: rotate(-8deg);
-  box-shadow: 0 2cqw 4cqw rgb(0 0 0 / 30%);
-  animation: live-pulse 2.4s ease-in-out infinite;
 }
-@keyframes live-pulse {
-  50% {
-    transform: rotate(-8deg) scale(1.06);
+.ad__live i {
+  width: 1.6cqw;
+  height: 1.6cqw;
+  min-width: 6px;
+  min-height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 0 rgb(255 255 255 / 70%);
+  animation: live-dot 1.8s infinite;
+}
+@keyframes live-dot {
+  70% {
+    box-shadow: 0 0 0 1.6cqw rgb(255 255 255 / 0%);
   }
 }
-.ad__foot {
-  position: absolute;
-  z-index: 3;
-  left: 5cqw;
-  right: 5cqw;
-  bottom: 6cqw;
-  display: grid;
-  justify-items: start;
-  gap: 2.4cqw;
-}
-.ad__chips {
+/* In normal flow, so a banner grows taller if its text needs the room (aspect-ratio is a minimum). */
+.ad__copy {
+  grid-area: 1 / 1;
+  align-self: start;
+  position: relative;
+  z-index: 2;
+  width: 50cqw;
+  margin: 15cqw 0 0 5.5cqw;
+  padding-bottom: 6cqw;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.4cqw;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.ad__chips li {
-  padding: 1.1cqw 2.8cqw;
-  border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 45%);
-  background: rgb(255 255 255 / 16%);
-  backdrop-filter: blur(6px);
-  font-size: max(10.5px, 3.2cqw);
+.ad__headline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 46cqw;
+  font-family: var(--display);
+  font-size: 7cqw;
   font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
-  white-space: nowrap;
+  text-shadow: 0 0.5cqw 1.6cqw rgb(0 0 0 / 22%);
+}
+/* The key word sits on a slanted marker block, like Domino's store lettering. */
+.ad__headline .is-mark {
+  margin: 0.06em 0;
+  padding: 0.04em 0.16em 0.08em;
+  border-radius: 0.12em;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 1.24em;
+  transform: rotate(-3deg);
+  text-shadow: none;
+  box-shadow: 0 1cqw 2.4cqw rgb(0 0 0 / 22%);
+}
+.ad__tag {
+  display: flex;
+  flex-direction: column;
+  margin-top: 3.4cqw;
+  padding: 1.8cqw 3cqw 2cqw;
+  border-radius: 3cqw;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2cqw 4cqw rgb(0 0 0 / 22%);
+}
+.ad__tag-label {
+  font-size: max(11px, 2.6cqw);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ad__tag-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2cqw;
+}
+.ad__tag-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8cqw;
+  font-family: var(--display);
+  font-size: 9cqw;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--brand);
+}
+.ad--red .ad__tag-value {
+  color: var(--red);
+}
+.ad__tag-value small {
+  font-size: 0.36em;
+  letter-spacing: 0;
+}
+.ad__tag-was {
+  font-size: max(12px, 3cqw);
+  font-weight: 700;
+  color: var(--muted);
+}
+.ad__terms {
+  max-width: 46cqw;
+  margin-top: 2cqw;
+  font-size: max(12px, 2.6cqw);
+  font-weight: 600;
+  color: rgb(255 255 255 / 92%);
 }
 .ad__cta {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  min-height: 40px;
-  padding: 0 4.4cqw;
+  min-height: 44px;
+  margin-top: 2.6cqw;
+  padding: 0 4cqw;
   border-radius: 999px;
   background: #fff;
-  color: var(--sticker);
-  font-size: max(13px, 4.2cqw);
+  color: var(--brand-strong);
+  font-size: max(14px, 3.2cqw);
   font-weight: 800;
   white-space: nowrap;
-  box-shadow: 0 2cqw 4cqw rgb(0 0 0 / 25%);
-  transition: translate 0.2s;
+  box-shadow: 0 2cqw 4cqw rgb(0 0 0 / 22%);
+  transition:
+    translate 0.2s,
+    box-shadow 0.2s;
+}
+.ad--red .ad__cta {
+  color: var(--red-strong);
 }
 .ad__cta:hover {
   translate: 0 -2px;
+  box-shadow: 0 3cqw 5cqw rgb(0 0 0 / 28%);
 }
-@media (prefers-reduced-motion: reduce) {
-  .ad__live {
-    animation: none;
+.ad__cta svg {
+  transition: translate 0.2s;
+}
+.ad__cta:hover svg {
+  translate: 3px 0;
+}
+.ad__tcs {
+  position: absolute;
+  right: 5cqw;
+  bottom: 4cqw;
+  font-size: max(10px, 2cqw);
+  font-weight: 700;
+  color: rgb(255 255 255 / 85%);
+  text-shadow: 0 1px 4px rgb(0 0 0 / 50%);
+}
+/* Phones: a taller banner so the copy has room. */
+@media (max-width: 600px) {
+  .ad::before {
+    padding-top: 100%;
   }
-  .ad__photo,
-  .ad__sticker {
-    transition: none;
+  .ad__copy {
+    margin-top: 16cqw;
+    width: 60cqw;
+  }
+  .ad__headline {
+    max-width: 58cqw;
+    font-size: 8.6cqw;
+  }
+  .ad__terms {
+    max-width: 48cqw;
+  }
+  .ad__tag-value {
+    font-size: 11cqw;
+  }
+  .ad__photo {
+    right: -18cqw;
+    top: 22cqw;
+    width: 64cqw;
   }
 }
