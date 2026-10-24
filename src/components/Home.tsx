@@ -228,57 +228,47 @@ function InfoBar() {
   const mins = store ? (delivery ? store.deliveryMins : store.pickupMins) : null
   return (
     <section className="container info-bar" aria-label="Delivery and payment">
-      <button type="button" className="info-card info-card--where" onClick={() => setLocationOpen(true)}>
-        <span className="info-card__icon">
-          <Icon name={delivery ? 'scooter' : 'store'} size={22} />
-        </span>
-        <span className="info-card__text">
-          <span className="info-card__label">{store ? (delivery ? 'Delivering to' : 'Pickup from') : 'Delivery or pickup'}</span>
-          <strong className="info-card__title">
-            {store ? (delivery ? store.city : `${store.area} store`) : 'Set your location'}
-            {store && delivery && state.location?.address ? <span className="info-card__addr"> · {state.location.address}</span> : null}
-          </strong>
-          <span className="info-card__eta">
-            {store ? (
-              <>
-                <span className="info-card__dot" aria-hidden="true" />
-                {delivery ? 'Arrives in' : 'Ready in'} {mins![0]}–{mins![1]} min
-              </>
-            ) : (
-              <>
-                <Icon name="clock" size={13} /> See arrival times near you
-              </>
-            )}
+      <div className="info-panel">
+        <button type="button" className="info-card info-card--where" onClick={() => setLocationOpen(true)}>
+          <span className="info-card__icon">
+            <Icon name={delivery ? 'scooter' : 'store'} size={20} />
           </span>
-        </span>
-        <span className="info-card__action">
-          {store ? 'Change' : 'Choose'} <Icon name="chevronRight" size={15} />
-        </span>
-      </button>
-      <div className="info-card info-card--pay">
-        <span className="info-card__icon">
-          <Icon name="shield" size={22} />
-        </span>
-        <span className="info-card__text">
-          <span className="info-card__label">Pay your way</span>
-          <strong className="info-card__title">Secure checkout</strong>
-          <ul className="pay-methods" aria-label="Accepted payment methods">
-            <li>
-              <Icon name="cash" size={14} /> Cash
-            </li>
-            <li>
-              <Icon name="card" size={14} /> Card
-            </li>
-            {WALLET_LOGOS.map((w) => (
-              <li key={w.name} className="pay-methods__logo" title={w.name}>
-                <img src={`${import.meta.env.BASE_URL}wallets/${w.file}`} alt={w.name} />
-              </li>
-            ))}
-            <li>
-              <Icon name="qr" size={14} /> LankaQR
-            </li>
-          </ul>
-        </span>
+          <span className="info-card__text">
+            <strong className="info-card__title">
+              {store ? (delivery ? `Delivering to ${store.city}` : `Pickup from ${store.area}`) : 'Delivery or pickup?'}
+              {store && delivery && state.location?.address ? <span className="info-card__addr"> · {state.location.address}</span> : null}
+            </strong>
+            <span className="info-card__sub">
+              {store ? (
+                <>
+                  <span className="info-card__dot" aria-hidden="true" />
+                  {delivery ? 'Arrives in' : 'Ready in'} {mins![0]}–{mins![1]} min
+                </>
+              ) : (
+                'Set your location to see arrival times'
+              )}
+            </span>
+          </span>
+          <span className="info-card__action">
+            {store ? 'Change' : 'Choose'} <Icon name="chevronRight" size={15} />
+          </span>
+        </button>
+        <div className="info-card info-card--pay">
+          <span className="info-card__icon">
+            <Icon name="shield" size={20} />
+          </span>
+          <span className="info-card__text">
+            <strong className="info-card__title">Secure checkout</strong>
+            <span className="info-card__sub">
+              Cash, card, LankaQR or
+              <span className="info-card__wallets">
+                {WALLET_LOGOS.map((w) => (
+                  <img key={w.name} src={`${import.meta.env.BASE_URL}wallets/${w.file}`} alt={w.name} title={w.name} />
+                ))}
+              </span>
+            </span>
+          </span>
+        </div>
       </div>
     </section>
   )
