@@ -1226,7 +1226,7 @@ main:focus {
 /* Scrolling offers banner: a red tape crossing a blue one, like a shopfront promo. */
 .ticker {
   position: relative;
-  margin: 36px -20px 12px;
+  margin: 64px -20px 40px;
 }
 .ticker__back {
   position: absolute;
@@ -1398,7 +1398,7 @@ main:focus {
     align-items: flex-start;
   }
   .ticker {
-    margin-top: 28px;
+    margin-block: 44px 28px;
   }
   .ticker__track li {
     font-size: 14px;
