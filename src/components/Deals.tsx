@@ -1,4 +1,4 @@
-import { Fragment, useRef } from 'react'
+import { useRef } from 'react'
 import { PRODUCTS, PRODUCT_BY_ID } from '../data/menu'
 import { MOTION_OK, gsap, useGSAP } from '../lib/gsap'
 import { DEALS, checkCoupon, lkr, type Deal } from '../lib/pricing'
@@ -15,7 +15,7 @@ const DEAL = Object.fromEntries(DEALS.map((d) => [d.code, d])) as Record<string,
 const MEDIUMS = PRODUCTS.flatMap((p) => (p.category === 'pizza' ? [p.prices.medium] : [])).sort((a, b) => b - a)
 const DUO_MAX_SAVING = MEDIUMS[0] + MEDIUMS[1] - 3990
 
-const CLOCK_UNITS = ['hrs', 'min', 'sec']
+const CLOCK_UNITS = ['h', 'm', 's']
 
 const COUPONS = [
   { code: 'BIG20', value: 20, unit: '%', label: 'off Large', tone: 'blue' },
@@ -135,17 +135,14 @@ export function Deals({ onPickPizzas }: { onPickPizzas: () => void }) {
         </div>
         <div className="deals__timer" role="timer" aria-label={`Today’s deals end in ${timeLeft}`}>
           <span className="deals__timer-label">
-            <Icon name="clock" size={14} /> Ends tonight in
+            <span className="deals__live" aria-hidden="true" /> Ends tonight
           </span>
           <span className="deals__clock" aria-hidden="true">
             {timeLeft.split(':').map((part, i) => (
-              <Fragment key={i}>
-                {i > 0 && <span className="deals__colon">:</span>}
-                <span className="deals__digit">
-                  <b>{part}</b>
-                  <small>{CLOCK_UNITS[i]}</small>
-                </span>
-              </Fragment>
+              <span key={i} className="deals__unit">
+                <b>{part}</b>
+                <small>{CLOCK_UNITS[i]}</small>
+              </span>
             ))}
           </span>
         </div>

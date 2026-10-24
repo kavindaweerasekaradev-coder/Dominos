@@ -2183,59 +2183,89 @@ main:focus {
   color: var(--ink-2);
   font-size: 16px;
 }
-/* Countdown to midnight, shown as hour, minute and second tiles. */
+/* Countdown to midnight: one light pill with a live dot and the time in Domino's blue. */
 .deals__timer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
 }
 .deals__timer-label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--red-strong);
+  white-space: nowrap;
+}
+.deals__live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 0 rgb(227 24 55 / 50%);
+  animation: live-pulse-dot 1.8s infinite;
+}
+@keyframes live-pulse-dot {
+  70% {
+    box-shadow: 0 0 0 7px rgb(227 24 55 / 0%);
+  }
 }
 .deals__clock {
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
-.deals__digit {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  min-width: 62px;
-  padding: 8px 8px 6px;
-  border-radius: 14px;
-  background: var(--navy);
-  color: #fff;
-  box-shadow: 0 10px 22px rgb(0 37 55 / 22%);
+  padding: 6px 4px;
+  border-radius: 999px;
+  background: var(--brand-soft);
 }
-.deals__digit b {
+.deals__unit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  padding: 0 10px;
+  color: var(--brand-strong);
+}
+.deals__unit + .deals__unit {
+  border-left: 1px solid var(--brand-line);
+}
+.deals__unit b {
+  min-width: 2ch;
   font-family: var(--display);
-  font-size: 30px;
+  font-size: 20px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
-.deals__digit small {
-  margin-top: 3px;
-  font-size: 10px;
+.deals__unit small {
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgb(255 255 255 / 70%);
+  color: var(--brand);
 }
-.deals__colon {
-  align-self: center;
-  margin-top: -14px;
-  font-family: var(--display);
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--red);
+@media (max-width: 420px) {
+  .deals__timer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    padding-left: 12px;
+  }
+  .deals__timer-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .deals__unit {
+    padding: 0 7px;
+  }
+  .deals__unit b {
+    font-size: 18px;
+  }
 }
 .deals__grid {
   display: grid;
@@ -2626,12 +2656,6 @@ main:focus {
     font-size: 34px;
   }
   .deal-coupon--red .deal-coupon__value {
-    font-size: 26px;
-  }
-  .deals__digit {
-    min-width: 54px;
-  }
-  .deals__digit b {
     font-size: 26px;
   }
   .deal-feature__plus {
